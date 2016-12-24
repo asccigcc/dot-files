@@ -155,3 +155,206 @@ set background=dark
 colorscheme solarized
 let g:solarized_termcolors=256
 set t_Co=256                    " 256 color term
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" -> Files [FIL]
+"  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Don't write anything but the file
+set nobackup
+set nowb
+set noswapfile
+
+" Blowfish encryption
+setlocal cryptmethod=blowfish
+
+" Filetypes
+filetype plugin on
+filetype indent on
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" -> Editing [EDT]
+"  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Use 2-space tabs, standard
+set tabstop=2
+set softtabstop=2
+set shiftwidth=2
+
+" Use spaces for tabs
+set expandtab
+set smarttab
+
+" Indent
+set autoindent
+set smartindent
+
+" Break long lines, per word, 80 chars per line
+set wrap
+set linebreak
+
+" Allow backspacing over everything
+set backspace=indent,eol,start
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"-> Helpers [HLP]
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Show syntax highlighting groups for word under cursor
+" By VimCasts
+nmap <leader>s :call <SID>SynStack()<CR>
+function! <SID>SynStack()
+	if !exists("*synstack")
+		return
+	endif
+	echo map(synstack(line('.'), col('.')), 'synIDattr(v:val,
+	"name")')
+endfunc
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"-> Autocmds and lang specific [AUL]
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd!
+
+" Set [...] to 2-space indent
+autocmd WinEnter,FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber
+set sts=2 ts=2 sw=2
+
+" Text -> Git, Asciidoc
+autocmd FileType text setlocal textwidth=80
+autocmd FileType asciidoc setlocal textwidth=80
+
+" Set SASS to SASS. Duh
+autocmd! BufRead,BufNewFile *.sass setfiletype sass
+
+" Set F# lex to F#
+autocmd! BufRead,BufNewFile *.fsl setfiletype fsharp
+autocmd! BufRead,BufNewFile *.fsy setfiletype fsharp
+
+" Don't change tabs for spaces in Makefiles
+autocmd FileType make setlocal noexpandtab
+
+" Delete trailing white space on sav
+func! DeleteTrailingWS()
+	exe "normal mz"
+	%s/\s\+$//ge
+	exe "normal `z"
+endfunc
+
+autocmd BufWrite *.py :call DeleteTrailingWS()
+autocmd BufWrite *.coffee :call DeleteTrailingWS()
+autocmd BufWrite *.txt :call DeleteTrailingWS()
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" -> Keymaps [KEY]
+"  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""
+" Vim keymaps
+""""""""""""""
+" Use spacebar to repeat last command
+nore <Space> .
+" Use . as :
+nore . :
+let mapleader = ","
+
+" Paste from the clipboard without indenting
+set pastetoggle=<Leader>p
+
+" Navigation keymaps
+nmap J 5j
+nmap K 5k
+xmap J 5j
+xmap K 5k
+
+" Buffer keymaps
+map <Leader>bn :bnext<cr>
+map <Leader>bN :bprevious<cr>
+map <Leader>bd :bdelete<cr>
+
+" Window keymaps
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Tab keymaps
+map <leader>tn :tabnew<cr>
+map <leader>tc :tabclose<cr>
+
+" Dismiss search highlight
+nmap <Leader><Space> :nohl<cr>
+
+" Giga save. Handle with care
+nmap <leader>ww :wall!<cr>
+nmap <leader>wq :wqall!<cr>
+nmap <leader>qq :qall!<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" -> Plugin keymaps [PKM]
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""
+" Commentary keymaps
+""""""""""""""""""""
+xmap <Leader>c  <Plug>Commentary
+nmap <Leader>c  <Plug>Commentary
+nmap <Leader>cc <Plug>CommentaryLine
+nmap <Leader>cu <Plug>CommentaryUndo
+
+"""""""""
+" Switch
+"""""""""
+nnoremap - :Switch<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" -> Plugin configuration [PCF]
+"  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""
+" CtrlP
+" """"""""""
+" " When opening multiple files, open them in the background
+" let g:ctrlp_open_multiple_files = 'i'
+"
+" """"""""""""
+" " Airline
+" """"""""""""
+let g:airline_powerline_fonts = 1
+let g:airline_theme = 'powerlineish'
+
+"""""""""""""""""""""""
+" Rainbow Parentheses
+"""""""""""""""""""""""
+" This can probably be configured in the colorscheme. Makes more sense
+let g:rbpt_colorpairs = [
+			\ ['brown',       'RoyalBlue3'],
+			\ ['Darkblue',    'SeaGreen3'],
+			\ ['darkgray',    'DarkOrchid3'],
+			\ ['darkgreen',   'firebrick3'],
+			\ ['darkcyan',    'RoyalBlue3'],
+			\ ['darkred',     'SeaGreen3'],
+			\ ['darkmagenta', 'DarkOrchid3'],
+			\ ['brown',       'firebrick3'],
+			\ ['gray',        'RoyalBlue3'],
+			\ ['darkmagenta', 'DarkOrchid3'],
+			\ ['Darkblue',    'firebrick3'],
+			\ ['darkgreen',   'RoyalBlue3'],
+			\ ['darkcyan',    'SeaGreen3'],
+			\ ['darkred',     'DarkOrchid3'],
+			\ ['red',         'firebrick3']]
+
+au VimEnter *
+RainbowParenthesesToggle
+au Syntax *
+RainbowParenthesesLoadRound
+au Syntax *
+RainbowParenthesesLoadSquare
+au Syntax *
+RainbowParenthesesLoadBraces
+""""""""""""
+" Syntastic
+""""""""""""
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
