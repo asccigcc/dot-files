@@ -4,22 +4,22 @@
 " Last update: December 23, 2016
 " Version: 0.0.1
 " Sections:
-" 	-> General 			[GEN]
-"	-> Package Manager 		[PKG]
-"	-> Vim UI 			[VUI]
-"	-> Files			[FIL]
-"	-> Editing			[EDT]
-"    	-> Helpers                    	[HLP]
-"    	-> Autocmds and lang specific 	[AUL]
-"    	-> Keymaps                    	[KEY]
-"    	-> Plugin Keymaps             	[PKM]
-"    	-> Plugin configuration       	[PCF]
+" 	-> General 			                [GEN]
+"	  -> Package Manager 		          [PKG]
+"	  -> Vim UI 			                [VUI]
+"	  -> Files			                  [FIL]
+"	  -> Editing			                [EDT]
+"   -> Helpers                    	[HLP]
+"   -> Autocmds and lang specific 	[AUL]
+"   -> Keymaps                    	[KEY]
+"   -> Plugin Keymaps             	[PKM]
+"   -> Plugin configuration       	[PCF]
 " References:
-"	-> ggalindez 	 [https://github.com/ggalindezb/Dot-Files/blob/master/vimrc]
-"    	-> Amix vimrc    [http://amix.dk/vim/vimrc.html]
-"    	-> VimCasts      [http://vimcasts.org]
-"    	-> Gary Berhardt [https://github.com/garybernhardt/dotfiles/blob/master/.vimrc]
-"    	-> Andrew Radev  [http://andrewradev.com]
+"	  -> ggalindez 	 [https://github.com/ggalindezb/Dot-Files/blob/master/vimrc]
+"   -> Amix vimrc    [http://amix.dk/vim/vimrc.html]
+"   -> VimCasts      [http://vimcasts.org]
+"   -> Gary Berhardt [https://github.com/garybernhardt/dotfiles/blob/master/.vimrc]
+"   -> Andrew Radev  [http://andrewradev.com]
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> General [GEN]
@@ -62,13 +62,13 @@ Plug 'airblade/vim-gitgutter'                         " Git diff in the gutter
 Plug 'bling/vim-airline'                              " Lean and mean status/tabline
 Plug 'vim-airline/vim-airline-themes'                 " Collection of themes for airline
 Plug 'ntpeters/vim-better-whitespace'                 " Highlight trailing whitespace
-" Plug 'scrooloose/syntastic'                         " Syntax checking hacks
+Plug 'scrooloose/syntastic'                         " Syntax checking hacks
 " Plug 'sjl/gundo.vim'				      " Gundo visualize vim undo into a tree
 Plug 'vim-scripts/taglist.vim'			      " Taglist visualize methods and class in a tree
 
 " Key snippets
 Plug 'vim-scripts/VisIncr'    			      " VisIncr Increment numbers and dates
-" Plug 'vim-scripts/L9'				      " L9 provides some utility functions 
+Plug 'vim-scripts/L9'				      " L9 provides some utility functions 
 
 " File/Buffer searching
 Plug 'kien/ctrlp.vim'                                 " Fuzzy file/buffer finder
@@ -88,8 +88,8 @@ Plug 'tpope/vim-commentary'                           " Comment stuff out
 Plug 'godlygeek/tabular'                              " Text filtering and alignment
 Plug 'kien/rainbow_parentheses.vim'                   " Better Rainbow Parentheses
 Plug 'tpope/vim-surround'                             " Quoting/parenthesizing made simple
-Plug 'tpope/vim-endwise.git'			      " End close in ruby
-Plug 'ap/vim-css-color.git'                           " Preview colours in css file
+Plug 'alpaca-tc/vim-endwise'			      " End close in ruby
+Plug 'ap/vim-css-color'                           " Preview colours in css file
 Plug 'alvan/vim-closetag'			      " Closetag HTML close tags
 Plug 'killphi/vim-ruby-refactoring'		      " Vim support for refactor code
 
@@ -151,10 +151,10 @@ set noerrorbells                " Fuck bells!
 set lazyredraw                  " Don't redraw while executing macros
 
 syntax on                       " Syntax highlight
+let g:solarized_termcolors=256
 set background=dark
 colorscheme solarized
-let g:solarized_termcolors=256
-set t_Co=256                    " 256 color term
+" set t_Co=256                    " 256 color term
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Files [FIL]
@@ -322,31 +322,31 @@ let g:airline_theme = 'powerlineish'
 " Rainbow Parentheses
 """""""""""""""""""""""
 " This can probably be configured in the colorscheme. Makes more sense
-let g:rbpt_colorpairs = [
-			\ ['brown',       'RoyalBlue3'],
-			\ ['Darkblue',    'SeaGreen3'],
-			\ ['darkgray',    'DarkOrchid3'],
-			\ ['darkgreen',   'firebrick3'],
-			\ ['darkcyan',    'RoyalBlue3'],
-			\ ['darkred',     'SeaGreen3'],
-			\ ['darkmagenta', 'DarkOrchid3'],
-			\ ['brown',       'firebrick3'],
-			\ ['gray',        'RoyalBlue3'],
-			\ ['darkmagenta', 'DarkOrchid3'],
-			\ ['Darkblue',    'firebrick3'],
-			\ ['darkgreen',   'RoyalBlue3'],
-			\ ['darkcyan',    'SeaGreen3'],
-			\ ['darkred',     'DarkOrchid3'],
-			\ ['red',         'firebrick3']]
+" let g:rbpt_colorpairs = [
+" 			\ ['brown',       'RoyalBlue3'],
+" 			\ ['Darkblue',    'SeaGreen3'],
+" 			\ ['darkgray',    'DarkOrchid3'],
+" 			\ ['darkgreen',   'firebrick3'],
+" 			\ ['darkcyan',    'RoyalBlue3'],
+" 			\ ['darkred',     'SeaGreen3'],
+" 			\ ['darkmagenta', 'DarkOrchid3'],
+" 			\ ['brown',       'firebrick3'],
+" 			\ ['gray',        'RoyalBlue3'],
+" 			\ ['darkmagenta', 'DarkOrchid3'],
+" 			\ ['Darkblue',    'firebrick3'],
+" 			\ ['darkgreen',   'RoyalBlue3'],
+" 			\ ['darkcyan',    'SeaGreen3'],
+" 			\ ['darkred',     'DarkOrchid3'],
+" 			\ ['red',         'firebrick3']]
 
-au VimEnter *
-RainbowParenthesesToggle
-au Syntax *
-RainbowParenthesesLoadRound
-au Syntax *
-RainbowParenthesesLoadSquare
-au Syntax *
-RainbowParenthesesLoadBraces
+" au VimEnter *
+" RainbowParenthesesToggle
+" au Syntax *
+" RainbowParenthesesLoadRound
+" au Syntax *
+" RainbowParenthesesLoadSquare
+" au Syntax *
+" RainbowParenthesesLoadBraces
 """"""""""""
 " Syntastic
 """"""""""""
