@@ -63,12 +63,12 @@ Plug 'bling/vim-airline'                              " Lean and mean status/tab
 Plug 'vim-airline/vim-airline-themes'                 " Collection of themes for airline
 Plug 'ntpeters/vim-better-whitespace'                 " Highlight trailing whitespace
 Plug 'scrooloose/syntastic'                         " Syntax checking hacks
-" Plug 'sjl/gundo.vim'				      " Gundo visualize vim undo into a tree
 Plug 'vim-scripts/taglist.vim'			      " Taglist visualize methods and class in a tree
+" Plug 'sjl/gundo.vim'				      " Gundo visualize vim undo into a tree
 
 " Key snippets
 Plug 'vim-scripts/VisIncr'    			      " VisIncr Increment numbers and dates
-Plug 'vim-scripts/L9'				      " L9 provides some utility functions 
+Plug 'vim-scripts/L9'				      " L9 provides some utility functions
 
 " File/Buffer searching
 Plug 'kien/ctrlp.vim'                                 " Fuzzy file/buffer finder
@@ -113,10 +113,10 @@ Plug 'othree/html5.vim', {'for': 'html'}              " Vim support for HTML5
 Plug 'slim-template/vim-slim', {'for': 'slim'}        " Vim support for Slim
 Plug 'tpope/vim-haml', {'for': 'haml'}                " Vim support for HAML/SASS
 Plug 'plasticboy/vim-markdown', {'for': 'mkd'}        " Vim support for Markdown
-Plug 'digitaltoad/vim-jade'			      " Vim supoort for Jade 
+Plug 'digitaltoad/vim-jade'			      " Vim supoort for Jade
 
 " Colorschemes
-Plug 'altercation/vim-colors-solarized'		      " Port of solarized 
+Plug 'altercation/vim-colors-solarized'		            " Port of solarized
 Plug 'whatyouhide/vim-gotham'                         " Code never sleeps in Gotham City
 Plug 'tomasr/molokai'                                 " Port of monokai
 Plug 'joshdick/onedark.vim'                           " Port of onedark
@@ -126,7 +126,15 @@ call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Vim UI [VUI]
-"  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" load color schema
+let g:solarized_termcolors=256
+syntax on
+syntax enable                       " Syntax highlight
+set background=dark
+colorscheme solarized
+set t_Co=256                    " 256 color term
+
 " Editing position aid
 set number
 set numberwidth=3
@@ -143,6 +151,12 @@ set smartcase                   " Ignore casing unless search a cased word
 set hlsearch                    " Highlight matches
 set incsearch		                " Real time match
 set magic                       " Parse regex in search
+set ignorecase                  " Ignore case when searching
+
+" Status Line
+set showcmd
+set ruler                       " Show ruler
+"set ch=2                         " Make command line two lines high
 
 " Interface improvments
 set novisualbell                " Disable flashes
@@ -150,15 +164,21 @@ set t_vb=                       " No visual bell
 set noerrorbells                " Fuck bells!
 set lazyredraw                  " Don't redraw while executing macros
 
-syntax on                       " Syntax highlight
-let g:solarized_termcolors=256
-set background=dark
-colorscheme solarized
-" set t_Co=256                    " 256 color term
+" Windows
+set equalalways " Multiple windows, when created, are equal in size
+set splitbelow splitright
+
+" Cursor highlights
+set cursorline
+set cursorcolumn
+
+" Line Wrapping
+" set nowrap
+" set linebreak  " Wrap at word
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Files [FIL]
-"  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Don't write anything but the file
 set nobackup
 set nowb
@@ -170,6 +190,9 @@ setlocal cryptmethod=blowfish
 " Filetypes
 filetype plugin on
 filetype indent on
+
+" Sessions - Sets what is saved when you save a session
+set sessionoptions=blank,buffers,curdir,folds,help,resize,tabpages,winsize
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Editing [EDT]
@@ -197,6 +220,14 @@ set backspace=indent,eol,start
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-> Helpers [HLP]
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Tabularize
+if exists(":Tabularize")
+  nmap <Leader>a= :Tabularize /=<CR>
+  vmap <Leader>a= :Tabularize /=<CR>
+  nmap <Leader>a: :Tabularize /:\zs<CR>
+  vmap <Leader>a: :Tabularize /:\zs<CR>
+endif
+
 " Show syntax highlighting groups for word under cursor
 " By VimCasts
 nmap <leader>s :call <SID>SynStack()<CR>
@@ -204,20 +235,33 @@ function! <SID>SynStack()
 	if !exists("*synstack")
 		return
 	endif
-	echo map(synstack(line('.'), col('.')), 'synIDattr(v:val,
-	"name")')
+	echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-> Autocmds and lang specific [AUL]
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd!
+" autocmd!
+let ruby_fold=1
+autocmd FileType ruby normal zR
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+autocmd FileType php set omnifunc=phpcomplete#CompletePHP
+autocmd FileType c set omnifunc=ccomplete#Complete
+autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
+autocmd FileType haml set omnifunc=hamlcomplete#Complete
+autocmd FileType yaml set omnifunc=yamlcomplete#Complete
+autocmd FileType sass set omnifunc=sasscomplete#Complete
+
 
 " Set [...] to 2-space indent
-autocmd WinEnter,FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber
+" autocmd WinEnter,FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber
 set sts=2 ts=2 sw=2
 
-" Text -> Git, Asciidoc
+" " Text -> Git, Asciidoc
 autocmd FileType text setlocal textwidth=80
 autocmd FileType asciidoc setlocal textwidth=80
 
@@ -244,7 +288,7 @@ autocmd BufWrite *.txt :call DeleteTrailingWS()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Keymaps [KEY]
-"  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""""""
 " Vim keymaps
 """"""""""""""
@@ -265,7 +309,7 @@ xmap K 5k
 
 " Buffer keymaps
 map <Leader>bn :bnext<cr>
-map <Leader>bN :bprevious<cr>
+map <Leader>bp :bprevious<cr>
 map <Leader>bd :bdelete<cr>
 
 " Window keymaps
@@ -286,9 +330,48 @@ nmap <leader>ww :wall!<cr>
 nmap <leader>wq :wqall!<cr>
 nmap <leader>qq :qall!<cr>
 
+" Copy to clipbord
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Plugin keymaps [PKM]
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+""""""""""""""""""""
+" NERDTree
+""""""""""""""""""""
+:noremap <Leader>n :NERDTreeToggle<CR>
+:noremap <Leader>N :NERDTreeFind<CR>
+let NERDTreeHijackNetrw=0 " User instead of Netrw when doing an edit /foobar
+let NERDTreeMouseMode=1 " Single click for everything
+let NERDCreateDefaultMappings=0 " I turn this off to make it simple
+let g:NERDTreeWinPos = "right"
+
+" railsvim
+map <Leader>ra :AS<CR>
+map <Leader>rs :RS<CR>
+
+" closetag
+let b:closetag_html_style = 1
+let b:unaryTagsStack = ''
+
+" fugitive
+map <Leader>ggs :Gstatus<CR>
+map <Leader>ggc :Gcommit<CR>
+map <Leader>ggb :Gblame<CR>
+"add the current file to commit
+map <Leader>gga :Gwrite<CR>
+map <Leader>ggd :Gdiff<CR>
+
+" spec vim
+map <Leader>t :call RunCurrentSpecFile()<CR>
+map <Leader>s :call RunNearestSpec()<CR>
+map <Leader>l :call RunLastSpec()<CR>
+map <Leader>r :call RunAllSpecs()<CR>
+
+" ruby and rails hooks
+nmap <Leader>bp orequire 'pry'; binding.pry<esc>
+" Add translate tag in erb
+nmap <Leader>in o<%= t('') %><esc>
 
 """"""""""""""""""""
 " Commentary keymaps
@@ -305,16 +388,17 @@ nnoremap - :Switch<cr>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Plugin configuration [PCF]
-"  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """"""""""
 " CtrlP
-" """"""""""
-" " When opening multiple files, open them in the background
-" let g:ctrlp_open_multiple_files = 'i'
-"
-" """"""""""""
-" " Airline
-" """"""""""""
+""""""""""
+" When opening multiple files, open them in the background
+let g:ctrlp_open_multiple_files = 'i'
+:noremap <Leader>o :CtrlP<CR>
+
+""""""""""""
+" Airline
+""""""""""""
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'powerlineish'
 
@@ -339,14 +423,11 @@ let g:airline_theme = 'powerlineish'
 " 			\ ['darkred',     'DarkOrchid3'],
 " 			\ ['red',         'firebrick3']]
 
-" au VimEnter *
-" RainbowParenthesesToggle
-" au Syntax *
-" RainbowParenthesesLoadRound
-" au Syntax *
-" RainbowParenthesesLoadSquare
-" au Syntax *
-" RainbowParenthesesLoadBraces
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+
 """"""""""""
 " Syntastic
 """"""""""""
@@ -358,3 +439,4 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 0
 let g:syntastic_check_on_open = 1
 let g:syntastic_check_on_wq = 0
+
