@@ -406,24 +406,6 @@ let g:airline_theme = 'powerlineish'
 """""""""""""""""""""""
 " Rainbow Parentheses
 """""""""""""""""""""""
-" This can probably be configured in the colorscheme. Makes more sense
-" let g:rbpt_colorpairs = [
-" 			\ ['brown',       'RoyalBlue3'],
-" 			\ ['Darkblue',    'SeaGreen3'],
-" 			\ ['darkgray',    'DarkOrchid3'],
-" 			\ ['darkgreen',   'firebrick3'],
-" 			\ ['darkcyan',    'RoyalBlue3'],
-" 			\ ['darkred',     'SeaGreen3'],
-" 			\ ['darkmagenta', 'DarkOrchid3'],
-" 			\ ['brown',       'firebrick3'],
-" 			\ ['gray',        'RoyalBlue3'],
-" 			\ ['darkmagenta', 'DarkOrchid3'],
-" 			\ ['Darkblue',    'firebrick3'],
-" 			\ ['darkgreen',   'RoyalBlue3'],
-" 			\ ['darkcyan',    'SeaGreen3'],
-" 			\ ['darkred',     'DarkOrchid3'],
-" 			\ ['red',         'firebrick3']]
-
 au VimEnter * RainbowParenthesesToggle
 au Syntax * RainbowParenthesesLoadRound
 au Syntax * RainbowParenthesesLoadSquare
@@ -432,9 +414,9 @@ au Syntax * RainbowParenthesesLoadBraces
 """"""""""""
 " Syntastic
 """"""""""""
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
 
 " let g:syntastic_always_populate_loc_list = 1
 " let g:syntastic_auto_loc_list = 0
