@@ -193,7 +193,7 @@ filetype plugin on
 filetype indent on
 
 " Sessions - Sets what is saved when you save a session
-" set sessionoptions=blank,buffers,curdir,folds,help,resize,tabpages,winsize
+set sessionoptions=blank,buffers,curdir,folds,help,resize,tabpages,winsize
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Editing [EDT]
