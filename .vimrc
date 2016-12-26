@@ -67,7 +67,7 @@ Plug 'vim-scripts/taglist.vim'			      " Taglist visualize methods and class in 
 Plug 'jeffkreeftmeijer/vim-numbertoggle'              " Numbertoggle toggle between relative and absolute line numbers
 " Plug 'sjl/gundo.vim'				      " Gundo visualize vim undo into a tree
 
-" Key snippets
+" Snippets
 Plug 'vim-scripts/VisIncr'    			      " VisIncr Increment numbers and dates
 Plug 'vim-scripts/L9'				      " L9 provides some utility functions
 
@@ -174,10 +174,6 @@ set splitbelow splitright
 set cursorline
 set cursorcolumn
 
-" Line Wrapping
-" set nowrap
-" set linebreak  " Wrap at word
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Files [FIL]
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -211,6 +207,9 @@ set smarttab
 " Indent
 set autoindent
 set smartindent
+set ai
+set si
+
 
 " Break long lines, per word, 80 chars per line
 set wrap
@@ -218,6 +217,8 @@ set linebreak
 
 " Allow backspacing over everything
 set backspace=indent,eol,start
+
+set matchpairs+=<:>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-> Helpers [HLP]
@@ -311,7 +312,7 @@ xmap K 5k
 
 " Buffer keymaps
 map <Leader>bn :bnext<cr>
-map <Leader>bp :bprevious<cr>
+map <Leader>bm :bprevious<cr>
 map <Leader>bd :bdelete<cr>
 
 " Window keymaps
@@ -412,9 +413,9 @@ au Syntax * RainbowParenthesesLoadRound
 au Syntax * RainbowParenthesesLoadSquare
 au Syntax * RainbowParenthesesLoadBraces
 
-" """"""""""""
-" " Syntastic
-" """"""""""""
+""""""""""""
+" Syntastic
+""""""""""""
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
@@ -423,4 +424,15 @@ set statusline+=%*
 " let g:syntastic_auto_loc_list = 0
 " let g:syntastic_check_on_open = 1
 " let g:syntastic_check_on_wq = 0
+
+" Better whitespace
+autocmd BufWritePre * StripWhitespace
+
+" autocomplete
+let g:AutoComplPop_IgnoreCaseOption = 0
+let g:AutoComplPop_BehaviorKeywordLength = 2
+
+" closetag
+let b:closetag_html_style = 1
+let b:unaryTagsStack = ''
 
