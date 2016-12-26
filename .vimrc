@@ -131,10 +131,11 @@ call plug#end()
 " load color schema
 let g:solarized_termcolors=256
 syntax on
-syntax enable                       " Syntax highlight
+syntax enable                         " Syntax highlight
 set background=dark
 colorscheme solarized
-set t_Co=256                    " 256 color term
+set t_Co=256                          " 256 color term
+hi Normal guibg=NONE ctermbg=NONE     " Set transparent background
 
 " Editing position aid
 set number
