@@ -93,6 +93,7 @@ Plug 'alpaca-tc/vim-endwise'			      " End close in ruby
 Plug 'ap/vim-css-color'                           " Preview colours in css file
 Plug 'alvan/vim-closetag'			      " Closetag HTML close tags
 Plug 'killphi/vim-ruby-refactoring'		      " Vim support for refactor code
+Plug 'ryanoasis/vim-devicons'               " Add dev icons to vim
 
 
 " Completion
