@@ -29,6 +29,8 @@ set nocompatible
 set laststatus=2
 set encoding=utf-8
 set hidden
+set visualbell  " no sounds
+set gcr=a:blinkon0  " disable cursor blink
 
 " Set to auto read when a file is changed from the outside
 set autoread
@@ -48,13 +50,11 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-" Dependencies
-Plug 'tomtom/tlib_vim', {'for': 'asciidoc'}           " tlib - for vim-asciidoc
-Plug 'dahu/Asif', {'for': 'asciidoc'}                 " asif - for vim-asciidoc
-Plug 'vim-scripts/SyntaxRange', {'for': 'asciidoc'}   " SyntaxRange - for vim-asciidoc
+" File parsers
 Plug 'tpope/vim-markdown', {'for': 'markdown'}        " vim-markdown - Highlighting and filetype
 Plug 'vim-scripts/ReloadScript'                       " ReloadScript - Guard for file changes
 
+Plug 'christoomey/vim-tmux-navigator'                             " easy navigation b/w vim & tmux
 " Vim interface extensions
 Plug 'fholgado/minibufexpl.vim'                       " Elegant buffer explorer
 Plug 'tpope/vim-fugitive'                             " Git wrapper so awesome, it should be illegal
@@ -94,6 +94,8 @@ Plug 'ap/vim-css-color'                           " Preview colours in css file
 Plug 'alvan/vim-closetag'			      " Closetag HTML close tags
 Plug 'killphi/vim-ruby-refactoring'		      " Vim support for refactor code
 Plug 'ryanoasis/vim-devicons'               " Add dev icons to vim
+Plug 'derekprior/vim-trimmer'                                            " trim whitespace on save
+Plug 'noprompt/vim-yardoc'                                                         " yardoc syntax
 
 
 " Completion
@@ -101,9 +103,12 @@ Plug 'mattn/emmet-vim', {'for': 'html'}               " Emmet expanding abbrevia
 " Plug 'Valloric/YouCompleteMe'                       " Code-completion engine for Vim
 " Plug 'SirVer/ultisnips'                             " Ultimate snippet solution for Vim
 " Plug 'honza/vim-snippets'                           " Default snippets
-" Plug 'ervandew/supertab'                            " Insert mode completions with Tab
+Plug 'ervandew/supertab'                            " Insert mode completions with Tab
+Plug 'wesQ3/vim-windowswap'                                                  " swap windows around
 
 " Filetype
+Plug 'w0rp/ale'                                      " syntax checking and live RuboCop violations
+Plug 'maximbaz/lightline-ale'                                        " ALE indicator for lightline
 Plug 'vim-ruby/vim-ruby'                              " Vim support for Ruby
 Plug 'tpope/vim-rails'                                " Vim support for Rails
 Plug 'tpope/vim-bundler'			      " Vim support for Bundler
@@ -116,6 +121,9 @@ Plug 'slim-template/vim-slim', {'for': 'slim'}        " Vim support for Slim
 Plug 'tpope/vim-haml', {'for': 'haml'}                " Vim support for HAML/SASS
 Plug 'plasticboy/vim-markdown', {'for': 'mkd'}        " Vim support for Markdown
 Plug 'digitaltoad/vim-jade'			      " Vim supoort for Jade
+Plug 'tpope/vim-dispatch'                                               " run rspec specs from vim
+Plug 't9md/vim-ruby-xmpfilter'                                            " inline ruby completion
+Plug 'tpope/vim-endwise'                                               " auto end addition in ruby
 
 " Colorschemes
 Plug 'altercation/vim-colors-solarized'		            " Port of solarized
@@ -123,6 +131,9 @@ Plug 'whatyouhide/vim-gotham'                         " Code never sleeps in Got
 Plug 'tomasr/molokai'                                 " Port of monokai
 Plug 'joshdick/onedark.vim'                           " Port of onedark
 Plug 'sjl/badwolf'                                    " Woof Woof
+Plug 'morhetz/gruvbox'                                         " Retro groove color scheme for Vim
+Plug 'itchyny/lightline.vim'                                               " minimalist status bar
+Plug 'ryanoasis/vim-devicons'                                                              " icons
 
 call plug#end()
 
@@ -139,7 +150,7 @@ set t_Co=256                          " 256 color term
 hi Normal guibg=NONE ctermbg=NONE     " Set transparent background
 
 " Editing position aid
-set number
+set number relativenumber
 set numberwidth=3
 set cursorline
 
@@ -148,6 +159,8 @@ set wildmenu                    " Autocomplete in cmd
 set wildignore=*~,*.swp         " Ignore temp files
 set showcmd                     " Show partial cmd
 set cmdheight=1                 " Short cmd line
+set showmode                                                   " show current mode down the bottom
+set synmaxcol=128                          " no syntax highlighting for lines longer than 128 cols
 
 " Search options
 set smartcase                   " Ignore casing unless search a cased word
@@ -175,6 +188,20 @@ set splitbelow splitright
 set cursorline
 set cursorcolumn
 
+" Interaction
+set timeoutlen=1000 ttimeoutlen=0         " remove delay from escape key when entering normal mode
+set history=1000                                                  " store lots of :cmdline history
+set mouse=a                                                        " mouse scrolling in vim splits
+set lazyredraw                                                                " speed up scrolling
+set regexpengine=1
+set clipboard+=unnamedplus                                         " use system clipboard for copy
+
+" Custom commands
+map <Leader>p :set paste<CR><esc>"*]p:set nopaste<cr>  " automate clipboard copy/paste indentation
+map <Leader>bi :!bundle install<cr>                                        " bundle install in vim
+map <Leader>sp :!bundle exec rspec spec<cr> " run bundle exec rspec
+nmap <leader>bp orequire 'pry'; binding.pry<esc>^                           " insert ruby debugger
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " -> Files [FIL]
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -187,8 +214,9 @@ set noswapfile
 setlocal cryptmethod=blowfish
 
 " Filetypes
-filetype plugin on
-filetype indent on
+filetype plugin indent on
+
+match ErrorMsg '\s\+$'                                             " highlight trailing whitespace
 
 " Sessions - Sets what is saved when you save a session
 set sessionoptions=blank,buffers,curdir,folds,help,resize,tabpages,winsize
@@ -200,6 +228,7 @@ set sessionoptions=blank,buffers,curdir,folds,help,resize,tabpages,winsize
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
+set modelines=1                                 " only use setting at bottom of page for this file
 
 " Use spaces for tabs
 set expandtab
@@ -219,8 +248,18 @@ set linebreak
 " Allow backspacing over everything
 set backspace=indent,eol,start
 
+nnoremap <C-J> <C-W><C-J>                                         " easy navigation between splits
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
 set matchpairs+=<:>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"-> Git [GIT]
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+au FileType gitcommit set tw=72                       " auto wrap at 72 cols during commit message
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "-> Helpers [HLP]
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -349,6 +388,11 @@ let NERDTreeHijackNetrw=0 " User instead of Netrw when doing an edit /foobar
 let NERDTreeMouseMode=1 " Single click for everything
 let NERDCreateDefaultMappings=0 " I turn this off to make it simple
 let g:NERDTreeWinPos = "right"
+let NERDTreeShowHidden=1  " Show hidden files
+let NERDTreeDirArrows = 1
+let NERDTreeMinimalUI = 1  " minimal ui
+let NERDTreeAutoDeleteBuffer = 1  " auto delete buffer of file deleted
+let NERDTreeIgnore = ['\.DS_Store']   " ignore index files
 
 " railsvim
 map <Leader>ra :AS<CR>
@@ -397,7 +441,7 @@ nnoremap - :Switch<cr>
 " CtrlP
 """"""""""
 " When opening multiple files, open them in the background
-let g:ctrlp_open_multiple_files = 'i'
+let g:ctrlp_open_multiple_files = 'ijr'
 :noremap <Leader>o :CtrlP<CR>
 
 """"""""""""
@@ -437,3 +481,34 @@ let g:AutoComplPop_BehaviorKeywordLength = 2
 let b:closetag_html_style = 1
 let b:unaryTagsStack = ''
 
+"--------------- Ale -----------------------------------------------------------------------------
+  let g:ale_fixers = {
+  \   'go': ['gofmt'],
+  \   'javascript': ['eslint', 'prettier'],
+  \   'ruby': ['rubocop'],
+  \   'vue': ['prettier'],
+  \   'yaml': ['prettier']
+  \}
+
+  let g:ale_linters = {
+  \   'go': ['golint'],
+  \   'javascript': ['eslint', 'prettier'],
+  \   'erb': ['erb'],
+  \   'ruby': ['rubocop', 'sorbet', 'brakeman', 'rails_best_practices']
+  \}
+
+  " Bind F8 to fixing problems with ALE
+  nmap <Leader>\ <Plug>(ale_fix)
+  "---------------- vim-gitgutter ------------------------------------------------------------------
+  set updatetime=100
+"---------------- vim-surround -------------------------------------------------------------------
+  set filetype=eruby                                                               " define filetype
+
+  let b:surround_{char2nr('=')} = "<%= \r %>"                       " `ctrl-s =` to insert print erb
+  let b:surround_{char2nr('-')} = "<% \r %>"                              " `ctrl-s -` to insert erb
+"---------------- closetag -----------------------------------------------------------------------
+  let g:closetag_filenames = "*.html.erb,*.html"                  " tag completion for erb files too
+  "---------------- vim-auto-save ------------------------------------------------------------------
+  let g:auto_save = 1                                               " enable AutoSave on Vim startup
+  "---------------- indentLine ---------------------------------------------------------------------
+  let g:indentLine_color_term = 239                                  " indentation lines more subtle
