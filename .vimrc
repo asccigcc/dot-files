@@ -89,7 +89,6 @@ Plug 'tpope/vim-commentary'                           " Comment stuff out
 Plug 'godlygeek/tabular'                              " Text filtering and alignment
 Plug 'kien/rainbow_parentheses.vim'                   " Better Rainbow Parentheses
 Plug 'tpope/vim-surround'                             " Quoting/parenthesizing made simple
-Plug 'alpaca-tc/vim-endwise'			      " End close in ruby
 Plug 'ap/vim-css-color'                           " Preview colours in css file
 Plug 'alvan/vim-closetag'			      " Closetag HTML close tags
 Plug 'killphi/vim-ruby-refactoring'		      " Vim support for refactor code
@@ -123,7 +122,7 @@ Plug 'plasticboy/vim-markdown', {'for': 'mkd'}        " Vim support for Markdown
 Plug 'digitaltoad/vim-jade'			      " Vim supoort for Jade
 Plug 'tpope/vim-dispatch'                                               " run rspec specs from vim
 Plug 't9md/vim-ruby-xmpfilter'                                            " inline ruby completion
-Plug 'tpope/vim-endwise'                                               " auto end addition in ruby
+Plug 'tpope/vim-endwise'                              " auto end addition in ruby
 
 " Colorschemes
 Plug 'altercation/vim-colors-solarized'		            " Port of solarized
@@ -197,7 +196,7 @@ set regexpengine=1
 set clipboard+=unnamedplus                                         " use system clipboard for copy
 
 " Custom commands
-map <Leader>p :set paste<CR><esc>"*]p:set nopaste<cr>  " automate clipboard copy/paste indentation
+map <Leader>p :set paste<CR><esc>"*]p:set nopaste<cr>   " automate clipboard copy/paste indentation
 map <Leader>bi :!bundle install<cr>                                        " bundle install in vim
 map <Leader>sp :!bundle exec rspec spec<cr> " run bundle exec rspec
 nmap <leader>bp orequire 'pry'; binding.pry<esc>^                           " insert ruby debugger
@@ -241,11 +240,11 @@ set ai
 set si
 
 
-" Break long lines, per word, 80 chars per line
+"" Break long lines, per word, 80 chars per line
 set wrap
 set linebreak
 
-" Allow backspacing over everything
+"" Allow backspacing over everything
 set backspace=indent,eol,start
 
 nnoremap <C-J> <C-W><C-J>                                         " easy navigation between splits
@@ -255,15 +254,15 @@ nnoremap <C-H> <C-W><C-H>
 
 set matchpairs+=<:>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"-> Git [GIT]
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""-> Git [GIT]
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 au FileType gitcommit set tw=72                       " auto wrap at 72 cols during commit message
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"-> Helpers [HLP]
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Tabularize
+""-> Helpers [HLP]
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Tabularize
 if exists(":Tabularize")
   nmap <Leader>a= :Tabularize /=<CR>
   vmap <Leader>a= :Tabularize /=<CR>
@@ -271,8 +270,8 @@ if exists(":Tabularize")
   vmap <Leader>a: :Tabularize /:\zs<CR>
 endif
 
-" Show syntax highlighting groups for word under cursor
-" By VimCasts
+"" Show syntax highlighting groups for word under cursor
+"" By VimCasts
 nmap <leader>s :call <SID>SynStack()<CR>
 function! <SID>SynStack()
 	if !exists("*synstack")
@@ -281,17 +280,16 @@ function! <SID>SynStack()
 	echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
 endfunc
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"-> Autocmds and lang specific [AUL]
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" autocmd!
+""-> Autocmds and lang specific [AUL]
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" autocmd!
 let ruby_fold=1
 autocmd FileType ruby normal zR
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType python set omnifunc=pythoncomplete#Complete
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType php set omnifunc=phpcomplete#CompletePHP
 autocmd FileType c set omnifunc=ccomplete#Complete
 autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
@@ -300,88 +298,82 @@ autocmd FileType yaml set omnifunc=yamlcomplete#Complete
 autocmd FileType sass set omnifunc=sasscomplete#Complete
 
 
-" Set [...] to 2-space indent
+"" Set [...] to 2-space indent
 " autocmd WinEnter,FileType ruby,haml,eruby,yaml,html,javascript,sass,cucumber
 set sts=2 ts=2 sw=2
 
-" " Text -> Git, Asciidoc
+"" " Text -> Git, Asciidoc
 autocmd FileType text setlocal textwidth=80
 autocmd FileType asciidoc setlocal textwidth=80
 
-" Set SASS to SASS. Duh
+"" Set SASS to SASS. Duh
 autocmd! BufRead,BufNewFile *.sass setfiletype sass
 
-" Set F# lex to F#
-autocmd! BufRead,BufNewFile *.fsl setfiletype fsharp
-autocmd! BufRead,BufNewFile *.fsy setfiletype fsharp
-
-" Don't change tabs for spaces in Makefiles
+"" Don't change tabs for spaces in Makefiles
 autocmd FileType make setlocal noexpandtab
 
-" Delete trailing white space on sav
+"" Delete trailing white space on sav
 func! DeleteTrailingWS()
 	exe "normal mz"
 	%s/\s\+$//ge
 	exe "normal `z"
 endfunc
 
-autocmd BufWrite *.py :call DeleteTrailingWS()
+"autocmd BufWrite *.py :call DeleteTrailingWS()
 autocmd BufWrite *.coffee :call DeleteTrailingWS()
-autocmd BufWrite *.txt :call DeleteTrailingWS()
+"autocmd BufWrite *.txt :call DeleteTrailingWS()
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" -> Keymaps [KEY]
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""""""""""""""
-" Vim keymaps
-""""""""""""""
-" Use spacebar to repeat last command
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" -> Keymaps [KEY]
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""
+"" Vim keymaps
+"""""""""""""""
+"" Use spacebar to repeat last command
 nore <Space> .
-" Use . as :
+"" Use . as :
 nore . :
 let mapleader = ","
 
-" Paste from the clipboard without indenting
+"" Paste from the clipboard without indenting
 set pastetoggle=<Leader>p
 
-" Navigation keymaps
+"" Navigation keymaps
 nmap J 5j
 nmap K 5k
 xmap J 5j
 xmap K 5k
 
-" Buffer keymaps
+"" Buffer keymaps
 map <Leader>bn :bnext<cr>
 map <Leader>bm :bprevious<cr>
 map <Leader>bd :bdelete<cr>
 
-" Window keymaps
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
+"" Window keymaps
+"map <C-j> <C-W>j
+"map <C-k> <C-W>k
+"map <C-h> <C-W>h
+"map <C-l> <C-W>l
 
-" Tab keymaps
+"" Tab keymaps
 map <leader>tn :tabnew<cr>
 map <leader>tc :tabclose<cr>
 
-" Dismiss search highlight
+"" Dismiss search highlight
 nmap <Leader><Space> :nohl<cr>
 
-" Giga save. Handle with care
+"" Giga save. Handle with care
 nmap <leader>ww :wall!<cr>
 nmap <leader>wq :wqall!<cr>
 nmap <leader>qq :qall!<cr>
 
-" Copy to clipbord
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" -> Plugin keymaps [PKM]
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" -> Plugin keymaps [PKM]
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-""""""""""""""""""""
-" NERDTree
-""""""""""""""""""""
+"""""""""""""""""""""
+"" NERDTree
+"""""""""""""""""""""
 :noremap <Leader>n :NERDTreeToggle<CR>
 :noremap <Leader>N :NERDTreeFind<CR>
 let NERDTreeHijackNetrw=0 " User instead of Netrw when doing an edit /foobar
@@ -394,121 +386,116 @@ let NERDTreeMinimalUI = 1  " minimal ui
 let NERDTreeAutoDeleteBuffer = 1  " auto delete buffer of file deleted
 let NERDTreeIgnore = ['\.DS_Store']   " ignore index files
 
-" railsvim
+"" railsvim
 map <Leader>ra :AS<CR>
 map <Leader>rs :RS<CR>
 
-" closetag
+"" closetag
 let b:closetag_html_style = 1
 let b:unaryTagsStack = ''
 
-" fugitive
+"" fugitive
 map <Leader>ggs :Gstatus<CR>
 map <Leader>ggc :Gcommit<CR>
 map <Leader>ggb :Gblame<CR>
-"add the current file to commit
+""add the current file to commit
 map <Leader>gga :Gwrite<CR>
 map <Leader>ggd :Gdiff<CR>
 
-" spec vim
+"" spec vim
 map <Leader>t :call RunCurrentSpecFile()<CR>
 map <Leader>s :call RunNearestSpec()<CR>
 map <Leader>l :call RunLastSpec()<CR>
 map <Leader>r :call RunAllSpecs()<CR>
 
-" ruby and rails hooks
-nmap <Leader>bp orequire 'pry'; binding.pry<esc>
-" Add translate tag in erb
-nmap <Leader>in o<%= t('') %><esc>
+"""""""""""""""""""""
+"" Commentary keymaps
+"""""""""""""""""""""
+"xmap <Leader>c  <Plug>Commentary
+"nmap <Leader>c  <Plug>Commentary
+"nmap <Leader>cc <Plug>CommentaryLine
+"nmap <Leader>cu <Plug>CommentaryUndo
 
-""""""""""""""""""""
-" Commentary keymaps
-""""""""""""""""""""
-xmap <Leader>c  <Plug>Commentary
-nmap <Leader>c  <Plug>Commentary
-nmap <Leader>cc <Plug>CommentaryLine
-nmap <Leader>cu <Plug>CommentaryUndo
-
-"""""""""
-" Switch
-"""""""""
+""""""""""
+"" Switch
+""""""""""
 nnoremap - :Switch<cr>
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" -> Plugin configuration [PCF]
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-""""""""""
-" CtrlP
-""""""""""
-" When opening multiple files, open them in the background
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" -> Plugin configuration [PCF]
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""
+"" CtrlP
+"""""""""""
+"" When opening multiple files, open them in the background
 let g:ctrlp_open_multiple_files = 'ijr'
 :noremap <Leader>o :CtrlP<CR>
 
-""""""""""""
-" Airline
-""""""""""""
+"""""""""""""
+"" Airline
+"""""""""""""
 let g:airline_powerline_fonts = 1
 let g:airline_theme = 'powerlineish'
 
-"""""""""""""""""""""""
-" Rainbow Parentheses
-"""""""""""""""""""""""
+""""""""""""""""""""""""
+"" Rainbow Parentheses
+""""""""""""""""""""""""
 au VimEnter * RainbowParenthesesToggle
 au Syntax * RainbowParenthesesLoadRound
 au Syntax * RainbowParenthesesLoadSquare
 au Syntax * RainbowParenthesesLoadBraces
 
-""""""""""""
-" Syntastic
-""""""""""""
+"""""""""""""
+"" Syntastic
+"""""""""""""
 set statusline+=%#warningmsg#
 set statusline+=%{SyntasticStatuslineFlag()}
 set statusline+=%*
 
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 0
-" let g:syntastic_check_on_open = 1
-" let g:syntastic_check_on_wq = 0
+"" let g:syntastic_always_populate_loc_list = 1
+"" let g:syntastic_auto_loc_list = 0
+"" let g:syntastic_check_on_open = 1
+"" let g:syntastic_check_on_wq = 0
 
-" Better whitespace
+"" Better whitespace
 autocmd BufWritePre * StripWhitespace
 
-" autocomplete
+"" autocomplete
 let g:AutoComplPop_IgnoreCaseOption = 0
 let g:AutoComplPop_BehaviorKeywordLength = 2
 
-" closetag
+"" closetag
 let b:closetag_html_style = 1
 let b:unaryTagsStack = ''
 
-"--------------- Ale -----------------------------------------------------------------------------
-  let g:ale_fixers = {
-  \   'go': ['gofmt'],
-  \   'javascript': ['eslint', 'prettier'],
-  \   'ruby': ['rubocop'],
-  \   'vue': ['prettier'],
-  \   'yaml': ['prettier']
-  \}
+""--------------- Ale -----------------------------------------------------------------------------
+let g:ale_fixers = {
+ \   'go': ['gofmt'],
+ \   'javascript': ['eslint', 'prettier'],
+ \   'ruby': ['rubocop'],
+ \   'vue': ['prettier'],
+ \   'yaml': ['prettier']
+ \}
 
-  let g:ale_linters = {
-  \   'go': ['golint'],
-  \   'javascript': ['eslint', 'prettier'],
-  \   'erb': ['erb'],
-  \   'ruby': ['rubocop', 'sorbet', 'brakeman', 'rails_best_practices']
-  \}
+let g:ale_linters = {
+ \   'go': ['golint'],
+ \   'javascript': ['eslint', 'prettier'],
+ \   'erb': ['erb'],
+ \   'ruby': ['rubocop', 'sorbet', 'brakeman', 'rails_best_practices']
+ \}
 
-  " Bind F8 to fixing problems with ALE
-  nmap <Leader>\ <Plug>(ale_fix)
-  "---------------- vim-gitgutter ------------------------------------------------------------------
-  set updatetime=100
-"---------------- vim-surround -------------------------------------------------------------------
-  set filetype=eruby                                                               " define filetype
+"" " Bind F8 to fixing problems with ALE
+nmap <Leader>\ <Plug>(ale_fix)
+""---------------- vim-gitgutter ------------------------------------------------------------------
+set updatetime=100
+""---------------- vim-surround -------------------------------------------------------------------
+" set filetype=eruby                                                               " define filetype
 
-  let b:surround_{char2nr('=')} = "<%= \r %>"                       " `ctrl-s =` to insert print erb
-  let b:surround_{char2nr('-')} = "<% \r %>"                              " `ctrl-s -` to insert erb
-"---------------- closetag -----------------------------------------------------------------------
-  let g:closetag_filenames = "*.html.erb,*.html"                  " tag completion for erb files too
-  "---------------- vim-auto-save ------------------------------------------------------------------
-  let g:auto_save = 1                                               " enable AutoSave on Vim startup
-  "---------------- indentLine ---------------------------------------------------------------------
-  let g:indentLine_color_term = 239                                  " indentation lines more subtle
+let b:surround_{char2nr('=')} = "<%= \r %>"                       " `ctrl-s =` to insert print erb
+let b:surround_{char2nr('-')} = "<% \r %>"                              " `ctrl-s -` to insert erb
+""---------------- closetag -----------------------------------------------------------------------
+ let g:closetag_filenames = "*.html.erb,*.html"                  " tag completion for erb files too
+""---------------- vim-auto-save ------------------------------------------------------------------
+let g:auto_save = 1                                               " enable AutoSave on Vim startup
+""---------------- indentLine ---------------------------------------------------------------------
+let g:indentLine_color_term = 239                                  " indentation lines more subtle
