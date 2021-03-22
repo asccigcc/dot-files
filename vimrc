@@ -1,7 +1,10 @@
-" vimrc configuration file
+" Vimrc Configuration File
+"
+" This config file requires Vim 8.2
+"
 " Maintainer: asccigcc
 " Created: December 23, 2016
-" Last update: December 23, 2016
+" Updated: March 21, 2021
 " Version: 0.0.1
 " Sections:
 " 	-> General 			                [GEN]
@@ -15,7 +18,7 @@
 "   -> Plugin Keymaps             	[PKM]
 "   -> Plugin configuration       	[PCF]
 " References:
-"	  -> ggalindez 	 [https://github.com/ggalindezb/Dot-Files/blob/master/vimrc]
+"	  -> ggalindez 	   [https://github.com/ggalindezb/Dot-Files/blob/master/vimrc]
 "   -> Amix vimrc    [http://amix.dk/vim/vimrc.html]
 "   -> VimCasts      [http://vimcasts.org]
 "   -> Gary Berhardt [https://github.com/garybernhardt/dotfiles/blob/master/.vimrc]
@@ -130,9 +133,9 @@ Plug 'whatyouhide/vim-gotham'                         " Code never sleeps in Got
 Plug 'tomasr/molokai'                                 " Port of monokai
 Plug 'joshdick/onedark.vim'                           " Port of onedark
 Plug 'sjl/badwolf'                                    " Woof Woof
-Plug 'morhetz/gruvbox'                                         " Retro groove color scheme for Vim
-Plug 'itchyny/lightline.vim'                                               " minimalist status bar
-Plug 'ryanoasis/vim-devicons'                                                              " icons
+Plug 'morhetz/gruvbox'                                " Retro groove color scheme for Vim
+Plug 'itchyny/lightline.vim'                          " minimalist status bar
+Plug 'ryanoasis/vim-devicons'                         " icons
 
 call plug#end()
 
