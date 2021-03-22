@@ -1,0 +1,40 @@
+# This is Git's general settings
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[color]
+  ui = true
+[color "branch"]
+  current = yellow reverse
+  local = yellow
+  remote = green
+[color "diff"]
+  meta = yellow bold
+  frag = magenta bold
+  old = red bold
+  new = green bold
+[alias]
+  # add
+  a = add .                         # add everything to the staging area
+  chunkyadd = add --patch           # stage commits chunk by chunk
+
+  # log
+  l = log --graph --date=short
+  changes = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\" --name-status
+  short = log --pretty=format:\"%h %cr %cn %Cgreen%s%Creset\"
+  changelog = log --pretty=format:\" * %s\"
+  shortnocolor = log --pretty=format:\"%h %cr %cn %s\"
+
+  #ls
+  ls = diff-tree --no-commit-id --name-only -r
+
+  # status
+  s = status                        # status
+  st = status                       # status
+  stat = status                     # status
+  changed = !git status --porcelain | sed s/^...//
+
+[format]
+  pretty = format:%C(blue)%ad%Creset %C(yellow)%h%C(green)%d%Creset %C(blue)%s %C(magenta) [%an]%Creset
