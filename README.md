@@ -1,11 +1,10 @@
 # Pastorinni's DotFiles
 
-This is my personal Dotfiles that I use on my personal computer.
-Feel free to download or clone if you like it.
+This is my personal Dotfiles that I use. Feel free to download or clone if you like it.
 
 ## Content
 
-This repository contains the following dots:
+This repository contains the following dot files:
 
 - Github
 - Vim
@@ -13,10 +12,11 @@ This repository contains the following dots:
 - Tmux
 
 ## Installation
+
 First of all clone the repo or download, after that run the `Makefile` in the following way:
 
 ```
 make init
 ```
 
-This command will copy all your dots in the home path.
+This command will copy all the dots files on the home path.
