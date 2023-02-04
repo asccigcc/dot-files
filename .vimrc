@@ -1,8 +1,10 @@
 " vimrc configuration file
 " Maintainer: asccigcc
 " Created: December 23, 2016
-" Last update: Nov 1st, 2020
-" Version: 0.0.1
+" Last update: Feb 3rd, 2023
+" changelog: Updated airline and removed lightline because generate conflict.
+"
+" Version: 0.1.0
 " Sections:
 "   -> Package Manager 		  [PKG]
 "   -> General 			        [GEN]
@@ -12,13 +14,6 @@
 "   -> Helpers              [HLP]
 "   -> Keymaps              [KEY]
 "   -> Plugin Settings      [PUG]
-" References:
-"   -> ggalindez     [https://github.com/ggalindezb/Dot-Files/blob/master/vimrc]
-"   -> Amix vimrc    [http://amix.dk/vim/vimrc.html]
-"   -> VimCasts      [http://vimcasts.org]
-"   -> Gary Berhardt [https://github.com/garybernhardt/dotfiles/blob/master/.vimrc]
-"   -> Andrew Radev  [http://andrewradev.com]
-
 
 " -------------------- [PKG]
 
@@ -37,11 +32,7 @@ Plug 'scrooloose/nerdtree' " file menu
 Plug 'junegunn/fzf.vim' " fuzzy file finder
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'jeffkreeftmeijer/vim-numbertoggle' " auto toggling between line number modes
-" Plug 'christoomey/vim-tmux-navigator' " easy navigation b/w vim & tmux
 Plug 'ervandew/supertab' " tab autocomplete
-" Plug 'wesQ3/vim-windowswap' " swap windows around
-" Plug 'mileszs/ack.vim' " Wrapper for ack, beyond grep
-" Plug 'Valloric/YouCompleteMe'      " Code-completion engine for Vim
 
 " --------------------- Edition
 
@@ -49,7 +40,7 @@ Plug 'tpope/vim-repeat' " Repeating supported plugin maps
 Plug 'tpope/vim-endwise' " auto end addition in ruby
 Plug 't9md/vim-ruby-xmpfilter' " inline ruby completion
 Plug 'w0rp/ale' " syntax checking and live RuboCop violations
-Plug 'maximbaz/lightline-ale' " ALE indicator for lightline
+" Plug 'maximbaz/lightline-ale' " ALE indicator for lightline
 Plug 'vim-scripts/ReloadScript' " ReloadScript - Guard for file changes
 Plug 'tpope/vim-commentary' " Comment stuff out
 Plug 'godlygeek/tabular' " Text filtering and alignment
@@ -61,36 +52,24 @@ Plug 'tmhedberg/matchit' " Extended % matching
 
 " --------------------- Syntax
 
-" Plug 'vim-ruby/vim-ruby' " Vim support for Ruby
-" Plug 'fatih/vim-go' " Vim support for Go
 Plug 'tpope/vim-rails' " Vim support for Rails
-" Plug 'othree/html5.vim', {'for': 'html'} " Vim support for HTML5
-" Plug 'tpope/vim-haml', {'for': 'haml'} " Vim support for HAML/SASS
-" Plug 'plasticboy/vim-markdown', {'for': 'md'} " Vim support for Markdown
-" Plug 'kchmck/vim-coffee-script', {'for': 'coffee'} " Vim support for Coffeescript
-" Plug 'elzr/vim-json' " Vim support for JSON
 Plug 'sheerun/vim-polyglot' " all the syntax
-" Plug 'posva/vim-vue' " vue js syntax
 Plug 'yoheimuta/vim-protolint' " linter for protos
 Plug 'scrooloose/syntastic' " Syntax checking hacks
 
 " --------------------- Helpers
 
 Plug 'janko-m/vim-test' " vim rspec runner
-" Plug 'tpope/vim-dispatch' " run rspec specs from vim
 Plug 'vim-scripts/L9' " L9 provides some utility functions
 Plug 'killphi/vim-ruby-refactoring' " Vim support for refactor code
 Plug 'tpope/vim-bundler' " Vim support for Bundler
 Plug 'tpope/vim-fugitive' " Git wrapper so awesome, it should be illegal
-" Plug 'airblade/vim-gitgutter' " Git diff in the gutter
 
 " --------------------- Appareance
 
-Plug 'itchyny/lightline.vim' " minimalist status bar
 Plug 'ryanoasis/vim-devicons' " fancy icons in vim
 Plug 'bling/vim-airline' " Lean and mean status/tabline
 Plug 'vim-airline/vim-airline-themes' " Collection of themes for airline
-Plug 'bling/vim-bufferline'
 
 " --------------------- Colors
 
@@ -349,13 +328,13 @@ let b:unaryTagsStack = ''
 let NERDTreeHijackNetrw=0 " User instead of Netrw when doing an edit /foobar
 let NERDTreeMouseMode=1 " Single click for everything
 let NERDCreateDefaultMappings=0 " I turn this off to make it simple
-let g:NERDTreeWinPos = "left"
+let g:NERDTreeWinPos = "right"
 let NERDTreeShowHidden=1  " Show hidden files
 let NERDTreeDirArrows = 1
 let NERDTreeMinimalUI = 1  " minimal ui
 let NERDTreeAutoDeleteBuffer = 1  " auto delete buffer of file deleted
 let NERDTreeIgnore = ['\.DS_Store']   " ignore index files
-let g:NERDTreeQuitOnOpen=1 " close nerdtree when open file
+" let g:NERDTreeQuitOnOpen=1 " close nerdtree when open file
 
 set encoding=UTF-8
 set guifont=DroidSansMono\ Nerd\ Font:h11
@@ -398,7 +377,9 @@ nnoremap - :Switch<cr>
 
 " Airline
 let g:airline_powerline_fonts = 1
-let g:airline_theme = 'gotham256'
+let g:airline#extensions#tabline#enabled = 1 " enable top tabs
+let g:airline#extensions#tabline#buffer_nr_show = 1 " show buffer number
+let g:airline_theme = 'minimalist'
 
 " Rainbow Parentheses
 au VimEnter * RainbowParenthesesToggle
@@ -453,37 +434,37 @@ let g:indentLine_color_term = 239                                  " indentation
 "  the F8 key will toggle the Tagbar window
 nmap <F8> :TagbarToggle<CR>
 
-" Lightline -------------------
-let g:lightline = {
-      \ 'colorscheme': 'seoul256',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
-      \   'right': [ [ 'lineinfo' ],
-      \              [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ],
-      \              [ 'filetype', 'fileencoding'] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'fugitive#head'
-      \ },
-      \ 'component_expand': {
-      \   'linter_checking': 'lightline#ale#checking',
-      \   'linter_warnings': 'lightline#ale#warnings',
-      \   'linter_errors': 'lightline#ale#errors',
-      \   'linter_ok': 'lightline#ale#ok'
-      \ },
-      \ 'component_type': {
-      \   'linter_checking': 'left',
-      \   'linter_warnings': 'warning',
-      \   'linter_errors': 'error',
-      \   'linter_ok': 'left'
-      \ }
-      \}
+" " Lightline -------------------
+" let g:lightline = {
+"       \ 'colorscheme': 'seoul256',
+"       \ 'active': {
+"       \   'left': [ [ 'mode', 'paste' ],
+"       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
+"       \   'right': [ [ 'lineinfo' ],
+"       \              [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ],
+"       \              [ 'filetype', 'fileencoding'] ]
+"       \ },
+"       \ 'component_function': {
+"       \   'gitbranch': 'fugitive#head'
+"       \ },
+"       \ 'component_expand': {
+"       \   'linter_checking': 'lightline#ale#checking',
+"       \   'linter_warnings': 'lightline#ale#warnings',
+"       \   'linter_errors': 'lightline#ale#errors',
+"       \   'linter_ok': 'lightline#ale#ok'
+"       \ },
+"       \ 'component_type': {
+"       \   'linter_checking': 'left',
+"       \   'linter_warnings': 'warning',
+"       \   'linter_errors': 'error',
+"       \   'linter_ok': 'left'
+"       \ }
+"       \}
 
-let g:lightline#ale#indicator_checking = "\uf110"                " indicator icons
-let g:lightline#ale#indicator_warnings = "\uf071  "              " whitespace intentional
-let g:lightline#ale#indicator_errors = "\uf05e    "              " whitespace intentional
-let g:lightline#ale#indicator_ok = "\uf00c"
+" let g:lightline#ale#indicator_checking = "\uf110"                " indicator icons
+" let g:lightline#ale#indicator_warnings = "\uf071  "              " whitespace intentional
+" let g:lightline#ale#indicator_errors = "\uf05e    "              " whitespace intentional
+" let g:lightline#ale#indicator_ok = "\uf00c"
 
 " terminal
 noremap <leader>tv :botright vnew <Bar> :terminal<cr>
