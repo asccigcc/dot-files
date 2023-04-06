@@ -8,8 +8,8 @@ read answer
 if [[ "$answer" == "Y" || "$answer" == "y" ]]; then
   echo "docker prune starting"
 
-  docker builder prune
-  docker system prune --volumes
+  docker builder prune -f
+  docker system prune --volumes -f
 
   echo "Docker prune complete."
 else
