@@ -1,0 +1,8 @@
+# Local environment variables file
+#
+# This file keeps all the environment variables used by your programs
+
+export GOPATH=$HOME/workspace
+export BUNDLE_ENTERPRISE__CONTRIBSYS__COM=f223c080:fba27329
+export BUNDLE_GITHUB__COM=61f24f63d679b4414b2ef1cf89f0941becb873d3
+export GITHUB_ACCESS_TOKEN=61f24f63d679b4414b2ef1cf89f0941becb873d3
