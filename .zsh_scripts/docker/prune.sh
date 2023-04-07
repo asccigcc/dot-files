@@ -2,6 +2,10 @@
 #
 # This script prune Docker and save space
 
+# usage:
+
+## dkp - Run docker prune
+
 echo "Do you want to proceed prune Docker? [Y/n]"
 read answer
 
