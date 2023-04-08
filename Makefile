@@ -6,4 +6,4 @@ init:
 	cp .zshrc_env ~/.zshrc_env && \
 	cp -rf .zshrc_scripts ~/.zshrc_scripts && \
 	cp gitconfig ~/.gitconfig && \
-	cp tmux.conf ~/.tmux.conf
+	cp .tmux.conf ~/.tmux.conf
