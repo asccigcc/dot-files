@@ -8,15 +8,16 @@ This repository contains the following dot files:
 
 - Github
 - Vim
-- Zshrc
+- Zsh
 - Tmux
 
 ## Installation
 
-First of all clone the repo or download, after that run the `Makefile` in the following way:
+Just only run:
 
 ```
-make init
+./install.sh
 ```
 
-This command will copy all the dots files on the home path.
+And this will setup your dot files locally.
+
