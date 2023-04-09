@@ -2,21 +2,32 @@
 #
 # This file keeps all the environment variables used by your programs
 
-export GOPATH=$HOME/workspace
 export BUNDLE_ENTERPRISE__CONTRIBSYS__COM=
 export BUNDLE_GITHUB__COM=
 export GITHUB_ACCESS_TOKEN=
 
-# Go lang Vars
+# Rust
+. "$HOME/.cargo/env"
+
+# Python
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
+# Go
 # Don't forget to change your path correctly!
-# export GOPATH=$HOME/go-workspace
+# export GOPATH=$HOME/workspace
 # export GOBIN=$GOPATH/bin
 # export GOROOT=/usr/local/opt/go/libexec
 # export PATH=$PATH:$GOPATH/bin
 # export PATH=$PATH:$GOBIN
 # export PATH=$PATH:$GOROOT/bin
 # export GOPRIVATE=""
+# Load Go environment manager
+# source ~/.gvm/scripts/gvm
 
+# Node
 # This loads nvm
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -27,11 +38,11 @@ export GITHUB_ACCESS_TOKEN=
 # Enable gpg
 # export GPG_TTY=$(tty)
 
+# RVM
 # Add RVM to PATH for scripting.
 # Make sure this is the last PATH variable change.
 # export PATH="$PATH:$HOME/.rvm/bin"
 # export PATH="/usr/local/sbin:$PATH"
 
-# Load Go environment manager
-# source ~/.gvm/scripts/gvm
-
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"

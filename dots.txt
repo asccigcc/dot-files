@@ -1,0 +1,3 @@
+
+files=(".vimrc" ".zshrc" ".zshrc_env" ".gitconfig" ".tmux.conf")
+directories=(".tmux" ".zsh_scripts")

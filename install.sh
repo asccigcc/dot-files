@@ -7,7 +7,7 @@
 #   install.sh
 
 # Prompt the user to confirm installation
-echo "Installing Dot-files"
+echo -e "\xE2\x9A\x99 Installing Dot-files \xE2\x9A\x99"
 echo "The following process will overwrite your current configuration."
 read -p "Do you want to proceed with the dot-files installation? [y/N] " confirm
 if [[ ! $confirm =~ ^[Yy]$ ]]; then
@@ -15,8 +15,8 @@ if [[ ! $confirm =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
-# Set the source and destination paths
-files=(".vimrc" ".zshrc" ".zshrc_env" ".gitconfig" ".tmux.conf")
+# Load config variables
+source config.txt
 
 for file in "${files[@]}"; do
     # Check if the destination file already exists
@@ -25,18 +25,17 @@ for file in "${files[@]}"; do
         echo "File ${HOME}/${file} already exists in destination."
         read -p "Do you want to overwrite it? [y/N] " overwrite
         if [[ $overwrite =~ ^[Yy]$ ]]; then
-            # cp "$file" "$dst_path"
+            cp "$file" "${HOME}/${file}"
             echo "File ${HOME}/${file} overwritten in destination"
         else
             echo "File ${HOME}/${file} not overwritten in destination"
         fi
     else
-        # cp "$file" "$dst_path"
+        cp "$file" "${HOME}/${file}"
         echo "File ${HOME}/${file} copied to destination"
     fi
 done
 
-directories=(".tmux" ".zsh_scripts")
 
 for dir in "${directories[@]}"; do
     echo -e "Preparing directory ${dir} to install \xE2\x9E\xA1"
@@ -44,16 +43,16 @@ for dir in "${directories[@]}"; do
         echo "File ${HOME}/${dir} already exists in destination."
         read -p "Do you want to overwrite it? [y/N] " overwrite
         if [[ $overwrite =~ ^[Yy]$ ]]; then
-            # cp -rf "$dir" "${HOME}/${dir}"
+            cp -rf "$dir" "${HOME}/${dir}"
             echo "File ${HOME}/${dir} overwritten in destination"
         else
             echo "File ${HOME}/${dir} not overwritten in destination"
         fi
     else
-        # cp -rf "$dir" "${HOME}/${dir}"
+        cp -rf "$dir" "${HOME}/${dir}"
         echo "File ${HOME}/${dir} copied to destination"
     fi
 done
 
-echo "Installation complete"
+echo -e "Installation complete \xE2\x9A\xA1"
 
