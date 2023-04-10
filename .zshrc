@@ -77,7 +77,15 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git macos zsh-syntax-highlighting)
+
+# Get operating system name
+os="$(uname -s)"
+
+if [[ "$os" == "Darwin" ]]; then
+  plugins=(git macos zsh-syntax-highlighting)
+elif [[ "$os" == "Linux" ]]; then
+  plugins=(git)
+fi
 
 source $ZSH/oh-my-zsh.sh
 
@@ -120,4 +128,3 @@ alias commands='~/.zsh_scripts/command.sh'
 
 # Docker
 alias dkp='~/.zsh_scripts/docker/prune.sh'
-

@@ -40,6 +40,7 @@ Plug 'tpope/vim-repeat' " Repeating supported plugin maps
 Plug 'tpope/vim-endwise' " auto end addition in ruby
 Plug 't9md/vim-ruby-xmpfilter' " inline ruby completion
 Plug 'w0rp/ale' " syntax checking and live RuboCop violations
+" Plug 'maximbaz/lightline-ale' " ALE indicator for lightline
 Plug 'vim-scripts/ReloadScript' " ReloadScript - Guard for file changes
 Plug 'tpope/vim-commentary' " Comment stuff out
 Plug 'godlygeek/tabular' " Text filtering and alignment
@@ -432,6 +433,38 @@ let g:indentLine_color_term = 239                                  " indentation
 " Tagbar ------------
 "  the F8 key will toggle the Tagbar window
 nmap <F8> :TagbarToggle<CR>
+
+" " Lightline -------------------
+" let g:lightline = {
+"       \ 'colorscheme': 'seoul256',
+"       \ 'active': {
+"       \   'left': [ [ 'mode', 'paste' ],
+"       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
+"       \   'right': [ [ 'lineinfo' ],
+"       \              [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ],
+"       \              [ 'filetype', 'fileencoding'] ]
+"       \ },
+"       \ 'component_function': {
+"       \   'gitbranch': 'fugitive#head'
+"       \ },
+"       \ 'component_expand': {
+"       \   'linter_checking': 'lightline#ale#checking',
+"       \   'linter_warnings': 'lightline#ale#warnings',
+"       \   'linter_errors': 'lightline#ale#errors',
+"       \   'linter_ok': 'lightline#ale#ok'
+"       \ },
+"       \ 'component_type': {
+"       \   'linter_checking': 'left',
+"       \   'linter_warnings': 'warning',
+"       \   'linter_errors': 'error',
+"       \   'linter_ok': 'left'
+"       \ }
+"       \}
+
+" let g:lightline#ale#indicator_checking = "\uf110"                " indicator icons
+" let g:lightline#ale#indicator_warnings = "\uf071  "              " whitespace intentional
+" let g:lightline#ale#indicator_errors = "\uf05e    "              " whitespace intentional
+" let g:lightline#ale#indicator_ok = "\uf00c"
 
 " terminal
 noremap <leader>tv :botright vnew <Bar> :terminal<cr>
