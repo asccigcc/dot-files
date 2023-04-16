@@ -11,7 +11,14 @@ This repository contains the following dot files:
 - Zsh
 - Tmux
 
-## Installation
+## Usage
+
+The dotfiles provides two bash commands `install.sh` and `sync.sh` that helps to setup your
+computer terminal.
+
+The command supports MacOS and Linux.
+
+### Installation
 
 Just only run:
 
@@ -21,7 +28,7 @@ Just only run:
 
 And this will setup your dot files locally.
 
-## Sync
+### Sync
 
 You can sync your dot-files repo using the following command
 
