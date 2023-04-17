@@ -23,7 +23,6 @@ copy_files() {
     for file in "${files[@]}"; do
         # Check if the destination file already exists
         if [ -f "${HOME}/${file}" ]; then
-            # echo "File ${HOME}/${file} already exists in destination."
             read -p "Do you want to overwrite ${file}? [y/N] " overwrite
             if [[ $overwrite =~ ^[Yy]$ ]]; then
                 # Check if we have previous copies
@@ -48,7 +47,6 @@ copy_dirs() {
     echo -e "Preparing Directories \xE2\x9E\xA1"
     for dir in "${directories[@]}"; do
         if [ -d "${HOME}/${dir}" ]; then
-            # echo "Directory ${HOME}/${dir} already exists in destination."
             read -p "Do you want to overwrite ${dir}? [y/N] " overwrite
             if [[ $overwrite =~ ^[Yy]$ ]]; then
                 # Check if we have previous copies
