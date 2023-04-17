@@ -1,4 +1,4 @@
-# Pastorinni's DotFiles
+# DotFiles
 
 This is my personal Dotfiles that I use. Feel free to download or clone if you like it.
 
