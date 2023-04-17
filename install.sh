@@ -18,51 +18,58 @@ fi
 # Load config variables
 source config.txt
 
-# Copy dot files
-for file in "${files[@]}"; do
-    # Check if the destination file already exists
-    if [ -f "${HOME}/${file}" ]; then
-        # echo "File ${HOME}/${file} already exists in destination."
-        read -p "Do you want to overwrite ${file}? [y/N] " overwrite
-        if [[ $overwrite =~ ^[Yy]$ ]]; then
-            # Check if we have previous copies
-            count=$(find "${HOME}" -maxdepth 1 -name "${file}.*" | wc -l)
-            copy_num=$((count + 1))
-            # Making a backup file
-            cp "${HOME}/${file}" "${HOME}/${file}.${copy_num}"
+copy_files() {
+    # Copy dot files
+    for file in "${files[@]}"; do
+        # Check if the destination file already exists
+        if [ -f "${HOME}/${file}" ]; then
+            # echo "File ${HOME}/${file} already exists in destination."
+            read -p "Do you want to overwrite ${file}? [y/N] " overwrite
+            if [[ $overwrite =~ ^[Yy]$ ]]; then
+                # Check if we have previous copies
+                count=$(find "${HOME}" -maxdepth 1 -name "${file}.*" | wc -l)
+                copy_num=$((count + 1))
+                # Making a backup file
+                cp "${HOME}/${file}" "${HOME}/${file}.${copy_num}"
+                cp "$file" "${HOME}/${file}"
+                echo -e "\xE2\x9C\x85 ${HOME}/${file}"
+            else
+                echo "File ${HOME}/${file} not overwritten in destination"
+            fi
+        else
             cp "$file" "${HOME}/${file}"
             echo -e "\xE2\x9C\x85 ${HOME}/${file}"
-        else
-            echo "File ${HOME}/${file} not overwritten in destination"
         fi
-    else
-        cp "$file" "${HOME}/${file}"
-        echo -e "\xE2\x9C\x85 ${HOME}/${file}"
-    fi
-done
+    done
+}
 
-# Copy dot directories
-echo -e "Preparing Directories \xE2\x9E\xA1"
-for dir in "${directories[@]}"; do
-    if [ -d "${HOME}/${dir}" ]; then
-        # echo "Directory ${HOME}/${dir} already exists in destination."
-        read -p "Do you want to overwrite ${dir}? [y/N] " overwrite
-        if [[ $overwrite =~ ^[Yy]$ ]]; then
-            # Check if we have previous copies
-            count=$(find "${HOME}" -maxdepth 1 -name "${dir}.*" | wc -l)
-            copy_num=$((count + 1))
-            # Making a backup file
-            cp -rf "${HOME}/${dir}" "${HOME}/${dir}.${copy_num}"
+copy_dirs() {
+    # Copy dot directories
+    echo -e "Preparing Directories \xE2\x9E\xA1"
+    for dir in "${directories[@]}"; do
+        if [ -d "${HOME}/${dir}" ]; then
+            # echo "Directory ${HOME}/${dir} already exists in destination."
+            read -p "Do you want to overwrite ${dir}? [y/N] " overwrite
+            if [[ $overwrite =~ ^[Yy]$ ]]; then
+                # Check if we have previous copies
+                count=$(find "${HOME}" -maxdepth 1 -name "${dir}.*" | wc -l)
+                copy_num=$((count + 1))
+                # Making a backup file
+                cp -rf "${HOME}/${dir}" "${HOME}/${dir}.${copy_num}"
+                cp -rf "$dir" "${HOME}/${dir}"
+                echo -e "\xE2\x9C\x85 ${HOME}/${dir}"
+            else
+                echo "Directory ${HOME}/${dir} not overwritten in destination"
+            fi
+        else
             cp -rf "$dir" "${HOME}/${dir}"
             echo -e "\xE2\x9C\x85 ${HOME}/${dir}"
-        else
-            echo "Directory ${HOME}/${dir} not overwritten in destination"
         fi
-    else
-        cp -rf "$dir" "${HOME}/${dir}"
-        echo -e "\xE2\x9C\x85 ${HOME}/${dir}"
-    fi
-done
+    done
+}
+
+copy_files
+copy_dirs
 
 echo -e "Installation complete \xE2\x9A\xA1"
 
