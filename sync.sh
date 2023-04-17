@@ -29,7 +29,7 @@ done
 # Copy dot directories
 for dir in "${directories[@]}"; do
     echo -e "Preparing directory ${dir} to sync \xE2\x9E\xA1"
-    cp -rf "${HOME}/${dir}" "$dir"
+    cp -rf "${HOME}/${dir}" "."
     echo "Directory ${HOME}/${dir} copied to git repo"
 done
 
