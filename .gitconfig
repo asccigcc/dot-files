@@ -45,3 +45,6 @@
 
 [init]
 	defaultBranch = main
+[user]
+	email = pastorinni.ochoa@gmail.com
+	name = Pastorinni Ochoa
