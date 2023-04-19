@@ -21,15 +21,16 @@ source config.txt
 # Copy dot files
 for file in "${files[@]}"; do
     # Check if the destination file already exists
-    echo -e "Preparing sync the file: ${file_path}  \xE2\x9E\xA1"
+    echo -e "Preparing sync the file: ${file}  \xE2\x9E\xA1"
     cp "${HOME}/${file}" "$file"
     echo "File ${HOME}/${file} copied to git repo"
 done
 
 # Copy dot directories
 for dir in "${directories[@]}"; do
-    echo -e "Preparing directory ${dir} to sync \xE2\x9E\xA1"
-    cp -rf "${HOME}/${dir}" "."
+    echo -e "Preparing directory ${HOME}/${dir} to sync \xE2\x9E\xA1"
+    rm -rf "${dir}"
+    cp -ri "${HOME}/${dir}" "."
     echo "Directory ${HOME}/${dir} copied to git repo"
 done
 
