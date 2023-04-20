@@ -23,7 +23,7 @@ The command supports MacOS and Linux.
 Just only run:
 
 ```
-./install.sh
+./install
 ```
 
 And this will setup your dot files locally.
@@ -33,12 +33,22 @@ And this will setup your dot files locally.
 You can sync your dot-files repo using the following command
 
 ```
-./sync.sh
+./sync
 ```
 
 This is useful in case that you did changes on your host computer that want to update into
 your dot-files repo.
 
-License
+### Publish
+
+This command will prepare your local changes and publish on Github.
+
+```
+./publish
+```
+
+This update `VERSION` file, create a `tag` and push to Github.
+
+## License
 
 This is released under the MIT License.
