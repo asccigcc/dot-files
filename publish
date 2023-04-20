@@ -6,7 +6,7 @@
 # Maintainer: asccigcc
 #
 # Usage:
-#   ./publish
+#   ./publish [MESSAGE]
 
 # read current version
 version=$(head -n 1 VERSION)
@@ -20,8 +20,11 @@ patch=$(echo "$version" | awk -F. '{print $3}')
 read -p "It is a major, minor or patch version? [M/m/p] " version
 if [[ "$version" == "M" ]]; then
   major=$((major+1))
+  minor=0
+  patch=0
 elif [[ "$version" == "m" ]]; then
   minor=$((minor+1))
+  patch=0
 else
   patch=$((patch+1))
 fi
@@ -29,7 +32,12 @@ fi
 new_version="$major.$minor.$patch"
 echo "${new_version}" > VERSION
 
-commit_message="Version ${new_version}"
+if [ "$1" ]; then
+  commit_message=$1
+else
+  commit_message="Version ${new_version}"
+fi
+
 current_branch=$(git branch --show-current)
 
 git add .
