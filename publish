@@ -29,8 +29,8 @@ fi
 new_version="$major.$minor.$patch"
 echo "${new_version}" > VERSION
 
-$commit_message="Version ${new_version}"
-$current_branch=$(git branch --show-current)
+commit_message="Version ${new_version}"
+current_branch=$(git branch --show-current)
 
 git add .
 git commit -m "Version ${new_version}"
