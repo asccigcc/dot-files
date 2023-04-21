@@ -21,17 +21,25 @@ source config.txt
 # Copy dot files
 for file in "${files[@]}"; do
     # Check if the destination file already exists
-    echo -e "Preparing sync the file: ${file}  \xE2\x9E\xA1"
+    echo -e "\U0001F504 Preparing sync the file: ${file}"
     cp "${HOME}/${file}" "$file"
     echo "File ${HOME}/${file} copied to git repo"
 done
 
 # Copy dot directories
 for dir in "${directories[@]}"; do
-    echo -e "Preparing directory ${HOME}/${dir} to sync \xE2\x9E\xA1"
-    rm -rf "${dir}"
-    cp -ri "${HOME}/${dir}" "."
-    echo "Directory ${HOME}/${dir} copied to git repo"
+    echo -e "\U0001F504 Preparing directory ${HOME}/${dir} to sync"
+    source_dir="$HOME/$dir/*"
+    cp -rf ${source_dir} ${dir}
+    echo "Directory ${source_dir} synced"
+done
+
+# Clean secrets
+source secrets
+
+for key in "${!my_secret[@]}"; do
+    echo -e "\U0001F9F9 Cleaning Secret: $key, File: ${my_secret[$key]}"
+    sed -i "s/$key=.*/$key=/" ${my_secret[$key]}
 done
 
 echo -e "Syncronization complete \xE2\x9A\xA1"
