@@ -128,3 +128,4 @@ alias commands='~/.zsh_scripts/command.sh'
 
 # Docker
 alias dkp='~/.zsh_scripts/docker/prune.sh'
+alias dkps='~/.zsh_scripts/docker/ps.sh'
