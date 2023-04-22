@@ -21,3 +21,14 @@ for file in "${files[@]}"; do
   fi
 done
 
+for dir in "${directories[@]}"; do
+  local_dir="${HOME}/${dir}"
+  diff_output=$(diff --color=always -u $local_dir $dir | less | cat)
+
+  if [ -n "$diff_output" ]; then
+    echo -e "\033[32mDiff ${dir}\033[0m"
+    echo -e "$diff_output"
+    echo " "
+  fi
+done
+
