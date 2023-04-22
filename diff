@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Diff between local and repository
+#
+# Maintainer: asccigcc
+#
+# Usage:
+#   ./diff
+
+# Load config variables
+source config.txt
+
+for file in "${files[@]}"; do
+  local_file="${HOME}/${file}"
+  diff_output=$(diff --color=always -u $local_file $file | cat)
+
+  if [ -n "$diff_output" ]; then
+    echo -e "\033[32mDiff ${file}\033[0m"
+    echo -e "$diff_output"
+    echo " "
+  fi
+done
+

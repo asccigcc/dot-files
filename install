@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # Install and configure dot-files
+#
 # Maintainer: asccigcc
 #
 # Usage:
-#   ./install.sh
+#   ./install
 
 # Prompt the user to confirm installation
 echo -e "\xE2\x9A\x99 Installing Dot-files \xE2\x9A\x99"

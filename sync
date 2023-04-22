@@ -4,7 +4,7 @@
 # Maintainer: asccigcc
 #
 # Usage:
-#   ./sync.sh
+#   ./sync
 
 # Prompt the user to confirm sync
 echo -e "\xE2\x9A\x99 Sync Dot-files \xE2\x9A\x99"
