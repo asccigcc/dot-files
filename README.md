@@ -49,6 +49,16 @@ This command will prepare your local changes and publish on Github.
 
 This update `VERSION` file, create a `tag` and push to Github.
 
+### Diff
+
+This command shows if we have diff between local and git directory files/dirs
+
+```
+./diff
+```
+
+Returns data in case of differences.
+
 ## License
 
 This is released under the MIT License.
