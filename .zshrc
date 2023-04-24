@@ -82,7 +82,13 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 os="$(uname -s)"
 
 if [[ "$os" == "Darwin" ]]; then
-  plugins=(git macos zsh-syntax-highlighting)
+plugins=(
+  git
+  zsh-syntax-highlighting
+  zsh-autosuggestions
+  autojump
+  brew
+)
 elif [[ "$os" == "Linux" ]]; then
   plugins=(git)
 fi
@@ -122,7 +128,6 @@ source $ZSH/oh-my-zsh.sh
 
 # Load env variables and paths
 source ~/.zshrc_env
-
 # Scripts
 alias commands='~/.zsh_scripts/command.sh'
 
