@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Setup a brand new computer
+#
+# Maintainer: asccigcc
+#
+# Usage:
+#   ./setup
+
+# Detect OS
+if [[ $(uname -s) == "Linux" ]]; then
+  # Load Linux setup
+  echo "Running on Linux"
+  if grep -q "ubuntu" /etc/os-release; then
+    # do something on Ubuntu
+    echo "Running on Ubuntu"
+  elif grep -q "fedora" /etc/os-release; then
+    # do something on Fedora
+    echo "Running on Fedora"
+  else
+    # do something else
+    echo "Unknown operating system"
+  fi
+elif [[ $(uname -s) == "Darwin" ]]; then
+  # Load MacOs setup
+  echo "Running on macOS"
+else
+  # do something else
+  echo "Unknown operating system"
+fi
