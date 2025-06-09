@@ -85,7 +85,7 @@ sudo dnf install -y \
     gnome-tweaks gnome-extensions-app \
     ffmpeg-libs libva libva-utils \
     docker fzf \
-    cascadia-code-nf-fonts gitui
+    cascadia-code-nf-fonts gitui yq
 
 sudo dnf config-manager setopt fedora-cisco-openh264.enabled=1
 gsettings set org.gnome.desktop.interface show-battery-percentage true
