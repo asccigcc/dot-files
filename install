@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 # Install and configure dot-files
 #
@@ -7,74 +8,62 @@
 # Usage:
 #   ./install
 
-# Prompt the user to confirm installation
-echo -e "\xE2\x9A\x99 Installing Dot-files \xE2\x9A\x99"
-echo "The following process will overwrite your current configuration and Install the OS dependencies."
-read -p "Do you want to proceed with the dot-files installation? [y/N] " confirm
-if [[ ! $confirm =~ ^[Yy]$ ]]; then
-    echo "Installation cancelled"
-    exit 1
-fi
+# Run from the repo root so `source config.txt` works from any CWD.
+cd "$(dirname "$0")"
 
-# Load config variables
+echo -e "\xE2\x9A\x99 Installing Dot-files \xE2\x9A\x99"
+echo "The following process will overwrite your current configuration."
+read -rp "Do you want to proceed with the dot-files installation? [y/N] " confirm
+[[ $confirm =~ ^[Yy]$ ]] || { echo "Installation cancelled"; exit 1; }
+
+# Load config variables (files, directories)
 source config.txt
 
-copy_files() {
-    # Copy dot files
-    for file in "${files[@]}"; do
-        # Check if the destination file already exists
-        if [ -f "${HOME}/${file}" ]; then
-            read -p "Do you want to overwrite ${file}? [y/N] " overwrite
-            if [[ $overwrite =~ ^[Yy]$ ]]; then
-                # Check if we have previous copies
-                count=$(find "${HOME}" -maxdepth 1 -name "${file}.*" | wc -l)
-                copy_num=$((count + 1))
-                # Making a backup file
-                cp "${HOME}/${file}" "${HOME}/${file}.${copy_num}"
-                cp "$file" "${HOME}/${file}"
-                echo -e "\xE2\x9C\x85 ${HOME}/${file}"
-            else
-                echo "File ${HOME}/${file} not overwritten in destination"
-            fi
-        else
-            cp "$file" "${HOME}/${file}"
-            echo -e "\xE2\x9C\x85 ${HOME}/${file}"
+# Copy $src into $HOME/$src, backing up any existing target first.
+#   $1     - relative path (file or directory)
+#   $2..$n - flags passed to cp (e.g. -f for files, -rf for directories)
+backup_and_copy() {
+    local src="$1"; shift
+    local flags=("$@")
+    local dest="${HOME}/${src}"
+
+    if [[ -e $dest ]]; then
+        read -rp "Do you want to overwrite ${src}? [y/N] " overwrite
+        if [[ ! $overwrite =~ ^[Yy]$ ]]; then
+            echo "Skipped ${dest}"
+            return
         fi
-    done
+        # Keep numbered backups so repeated installs never clobber a prior one.
+        local count backup
+        count=$(find "$HOME" -maxdepth 1 -name "${src}.bak.*" | wc -l | tr -d ' ')
+        backup="${dest}.bak.$((count + 1))"
+        cp "${flags[@]}" "$dest" "$backup"
+        echo "Backed up ${dest} -> ${backup}"
+    fi
+
+    cp "${flags[@]}" "$src" "$dest"
+    echo -e "\xE2\x9C\x85 ${dest}"
 }
 
-copy_dirs() {
-    # Copy dot directories
-    echo -e "Preparing Directories \xE2\x9E\xA1"
-    for dir in "${directories[@]}"; do
-        if [ -d "${HOME}/${dir}" ]; then
-            read -p "Do you want to overwrite ${dir}? [y/N] " overwrite
-            if [[ $overwrite =~ ^[Yy]$ ]]; then
-                # Check if we have previous copies
-                count=$(find "${HOME}" -maxdepth 1 -name "${dir}.*" | wc -l)
-                copy_num=$((count + 1))
-                # Making a backup file
-                cp -rf "${HOME}/${dir}" "${HOME}/${dir}.${copy_num}"
-                cp -rf "$dir" "${HOME}/${dir}"
-                echo -e "\xE2\x9C\x85 ${HOME}/${dir}"
-            else
-                echo "Directory ${HOME}/${dir} not overwritten in destination"
-            fi
-        else
-            cp -rf "$dir" "${HOME}/${dir}"
-            echo -e "\xE2\x9C\x85 ${HOME}/${dir}"
-        fi
-    done
-}
+for file in "${files[@]}"; do
+    backup_and_copy "$file" -f
+done
 
-copy_files
-copy_dirs
+echo -e "Preparing Directories \xE2\x9E\xA1"
+for dir in "${directories[@]}"; do
+    backup_and_copy "$dir" -rf
+done
 
-echo 'Prepare Tmux'
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-~/.tmux/plugins/tpm/tpm
-tmux source ~/.tmux.conf
-~/.tmux/plugins/tpm/bin/install_plugins
+echo "Prepare Tmux"
+if command -v tmux >/dev/null 2>&1; then
+    if [[ ! -d "${HOME}/.tmux/plugins/tpm" ]]; then
+        git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
+    fi
+    # Plugin install needs a running server; don't let it abort the install.
+    tmux start-server \; source-file "${HOME}/.tmux.conf" 2>/dev/null || true
+    "${HOME}/.tmux/plugins/tpm/bin/install_plugins" || true
+else
+    echo "tmux not found; skipping plugin setup"
+fi
 
 echo -e "Installation complete \xE2\x9A\xA1"
-
