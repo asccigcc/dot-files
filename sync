@@ -1,46 +1,138 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Sync dot-files from $HOME into this git repo
+# Sync dot-files between $HOME and this git repo.
 #
 # Maintainer: asccigcc
 #
 # Usage:
-#   ./sync
+#   ./sync push [--yes]   # local -> repo  (and scrub secrets)
+#   ./sync pull [--yes]   # repo  -> local (backs up existing files)
 
 # Run from the repo root so `source config.txt` works from any CWD.
 cd "$(dirname "$0")"
 
-echo -e "\xE2\x9A\x99 Sync Dot-files \xE2\x9A\x99"
-echo "The following process will overwrite the files tracked in this repo."
-read -rp "Do you want to proceed with the dot-files sync? [y/N] " confirm
-[[ $confirm =~ ^[Yy]$ ]] || { echo "Synchronization cancelled"; exit 1; }
+direction="${1:-}"
+assume_yes=false
+case "${2:-}" in
+    -y|--yes) assume_yes=true ;;
+esac
+
+usage() {
+    echo "Usage: ./sync <push|pull> [--yes]"
+    echo "  push  copy dotfiles from \$HOME into this repo (scrubs secrets)"
+    echo "  pull  copy dotfiles from this repo into \$HOME (backs up existing)"
+}
+
+# Prompt unless --yes was passed. $1 = question. Returns 0 to proceed.
+confirm() {
+    $assume_yes && return 0
+    local reply
+    read -rp "$1 [y/N] " reply
+    [[ $reply =~ ^[Yy]$ ]]
+}
+
+if ! command -v rsync >/dev/null 2>&1; then
+    echo "rsync is required but not installed." >&2
+    exit 1
+fi
 
 # Load config variables (files, directories)
 source config.txt
 
-# Copy tracked files from $HOME into the repo
-for file in "${files[@]}"; do
-    echo -e "\U0001F504 Syncing file: ${file}"
-    cp "${HOME}/${file}" "$file"
-done
+# Emit rsync --exclude args for a directory from .gitignore entries that fall
+# under it, e.g. ".tmux/plugins/*" -> "--exclude=plugins/*" for dir ".tmux".
+dir_excludes() {
+    local dir="$1" line
+    [[ -f .gitignore ]] || return 0
+    while IFS= read -r line; do
+        [[ -z $line || $line == \#* ]] && continue
+        [[ $line == "$dir/"* ]] && printf '%s\n' "--exclude=${line#"$dir"/}"
+    done < .gitignore
+}
 
-# Copy tracked directories. The trailing `/.` copies dotfiles too, which a
-# bare `/*` glob would silently skip.
-for dir in "${directories[@]}"; do
-    echo -e "\U0001F504 Syncing directory: ${dir}"
-    cp -Rf "${HOME}/${dir}/." "${dir}/"
-done
+# rsync a directory honouring .gitignore.
+#   $1 = repo-relative dir name, $2 = src, $3 = dst, $4 = "delete"|""
+sync_dir() {
+    local name="$1" src="$2" dst="$3" delete="${4:-}"
+    local args=(-a) e
+    [[ $delete == delete ]] && args+=(--delete)
+    while IFS= read -r e; do args+=("$e"); done < <(dir_excludes "$name")
+    mkdir -p "$dst"
+    rsync "${args[@]}" "$src/" "$dst/"
+}
 
-# Clean secrets. `sed -i.bak … && rm` is portable across GNU and BSD sed;
-# plain `sed -i` behaves differently on macOS and would leave secrets in place.
-source secrets
+push() {
+    for file in "${files[@]}"; do
+        echo -e "\U0001F504 push file: ${file}"
+        cp "${HOME}/${file}" "$file"
+    done
+    for dir in "${directories[@]}"; do
+        echo -e "\U0001F504 push dir:  ${dir}"
+        # Mirror local into the repo, dropping repo-only files (minus ignored).
+        sync_dir "$dir" "${HOME}/${dir}" "$dir" delete
+    done
+    scrub_secrets
+}
 
-for key in "${!my_secret[@]}"; do
-    file="${my_secret[$key]}"
-    echo -e "\U0001F9F9 Cleaning secret: ${key} in ${file}"
-    sed -i.bak "s/${key}=.*/${key}=/" "$file"
-    rm -f "${file}.bak"
-done
+pull() {
+    for file in "${files[@]}"; do
+        backup_and_copy "$file"
+    done
+    for dir in "${directories[@]}"; do
+        echo -e "\U0001F504 pull dir:  ${dir}"
+        # Overlay repo onto local; no --delete so local-only state survives.
+        sync_dir "$dir" "$dir" "${HOME}/${dir}"
+    done
+}
 
-echo -e "Synchronization complete \xE2\x9A\xA1"
+# Copy a repo file into $HOME, backing up an existing target first.
+backup_and_copy() {
+    local src="$1" dest="${HOME}/${1}"
+    if [[ -e $dest ]]; then
+        if ! confirm "Overwrite ${src}?"; then
+            echo "Skipped ${dest}"
+            return
+        fi
+        local count backup
+        count=$(find "$HOME" -maxdepth 1 -name "${src}.bak.*" | wc -l | tr -d ' ')
+        backup="${dest}.bak.$((count + 1))"
+        cp "$dest" "$backup"
+        echo "Backed up ${dest} -> ${backup}"
+    fi
+    cp "$src" "$dest"
+    echo -e "\U0001F504 pull file: ${src}"
+}
+
+# Blank out secret values in their files. `sed -i.bak … && rm` is portable
+# across GNU and BSD sed; plain `sed -i` behaves differently on macOS.
+scrub_secrets() {
+    source secrets
+    local entry key file
+    for entry in "${secrets[@]}"; do
+        key="${entry%%:*}"
+        file="${entry#*:}"
+        echo -e "\U0001F9F9 scrub: ${key} in ${file}"
+        sed -i.bak "s/${key}=.*/${key}=/" "$file"
+        rm -f "${file}.bak"
+    done
+}
+
+case "$direction" in
+    push)
+        confirm "This overwrites the files tracked in this repo. Proceed?" || {
+            echo "Sync cancelled"; exit 1; }
+        push
+        echo -e "Push complete \xE2\x9A\xA1"
+        ;;
+    pull)
+        confirm "This overwrites your local dotfiles. Proceed?" || {
+            echo "Sync cancelled"; exit 1; }
+        pull
+        echo -e "Pull complete \xE2\x9A\xA1"
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac
