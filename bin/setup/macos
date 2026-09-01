@@ -4,6 +4,46 @@ set -euo pipefail
 # Script for macOS' initial setup
 #
 # Maintainer: asccigcc
+#
+# Installs the Homebrew packages the tmux + vim configs depend on, places the
+# dotfiles via ./install, then installs the vim plugins. Safe to re-run:
+# `brew install` skips packages already present and ./install prompts before
+# overwriting anything.
 
-echo "macOS setup is not implemented yet."
-# TODO: install Homebrew, oh-my-zsh, powerlevel10k, and CLI dependencies.
+# Resolve the repo root so ./install and relative paths work from any CWD.
+REPO_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+cd "$REPO_ROOT"
+
+# ─── Homebrew ────────────────────────────────────────────────────────
+if ! command -v brew >/dev/null 2>&1; then
+    echo "Installing Homebrew"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    # Put brew on PATH for the rest of this script (Apple Silicon vs Intel).
+    if [[ -x /opt/homebrew/bin/brew ]]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    else
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+fi
+
+# ─── Packages the tmux/vim configs depend on ─────────────────────────
+# .vimrc expects the Homebrew fzf (adds /opt/homebrew/opt/fzf to runtimepath)
+# and uses ripgrep for search; tmux drives the .tmux.conf.
+echo "Installing packages"
+brew install tmux vim fzf ripgrep
+
+# Nerd Font so vim-airline / vim-devicons (and powerlevel10k) render icons.
+brew install --cask font-meslo-lg-nerd-font
+
+# ─── Place the dotfiles (.vimrc, .tmux.conf, .tmux + tpm) ─────────────
+# Must run before PlugInstall so .vimrc's plugin list is on disk.
+echo "Placing dotfiles via ./install"
+./install
+
+# ─── Vim plugins ─────────────────────────────────────────────────────
+# .vimrc bootstraps vim-plug on first launch; --sync blocks until done so the
+# headless run doesn't quit mid-install.
+echo "Installing vim plugins"
+vim +'PlugInstall --sync' +qall
+
+echo -e "macOS setup complete \xE2\x9A\xA1"
