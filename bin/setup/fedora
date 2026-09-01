@@ -1,5 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 # Script for Fedora's initial setup
 #
 # Maintainer: asccigcc
+
+echo "Fedora setup is not implemented yet."
+# TODO: dnf install zsh/tmux/vim dependencies, oh-my-zsh, powerlevel10k.

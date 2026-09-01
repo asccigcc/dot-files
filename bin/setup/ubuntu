@@ -1,6 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 # Script for Ubuntu's initial setup
 #
 # Maintainer: asccigcc
 
+echo "Ubuntu setup is not implemented yet."
+# TODO: apt install zsh/tmux/vim dependencies, oh-my-zsh, powerlevel10k.
