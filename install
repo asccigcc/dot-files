@@ -1,80 +1,31 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Install and configure dot-files
+# Install and configure dot-files: place them in $HOME and bootstrap tmux.
 #
 # Maintainer: asccigcc
 #
 # Usage:
-#   ./install
+#   ./install [--yes]
 
-# Prompt the user to confirm installation
+# Run from the repo root so ./sync resolves from any CWD.
+cd "$(dirname "$0")"
+
 echo -e "\xE2\x9A\x99 Installing Dot-files \xE2\x9A\x99"
-echo "The following process will overwrite your current configuration and Install the OS dependencies."
-read -p "Do you want to proceed with the dot-files installation? [y/N] " confirm
-if [[ ! $confirm =~ ^[Yy]$ ]]; then
-    echo "Installation cancelled"
-    exit 1
+
+# Copy the dotfiles into $HOME (backs up anything it overwrites).
+./sync pull "$@"
+
+echo "Prepare Tmux"
+if command -v tmux >/dev/null 2>&1; then
+    if [[ ! -d "${HOME}/.tmux/plugins/tpm" ]]; then
+        git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
+    fi
+    # Plugin install needs a running server; don't let it abort the install.
+    tmux start-server \; source-file "${HOME}/.tmux.conf" 2>/dev/null || true
+    "${HOME}/.tmux/plugins/tpm/bin/install_plugins" || true
+else
+    echo "tmux not found; skipping plugin setup"
 fi
 
-# Load config variables
-source config.txt
-
-copy_files() {
-    # Copy dot files
-    for file in "${files[@]}"; do
-        # Check if the destination file already exists
-        if [ -f "${HOME}/${file}" ]; then
-            read -p "Do you want to overwrite ${file}? [y/N] " overwrite
-            if [[ $overwrite =~ ^[Yy]$ ]]; then
-                # Check if we have previous copies
-                count=$(find "${HOME}" -maxdepth 1 -name "${file}.*" | wc -l)
-                copy_num=$((count + 1))
-                # Making a backup file
-                cp "${HOME}/${file}" "${HOME}/${file}.${copy_num}"
-                cp "$file" "${HOME}/${file}"
-                echo -e "\xE2\x9C\x85 ${HOME}/${file}"
-            else
-                echo "File ${HOME}/${file} not overwritten in destination"
-            fi
-        else
-            cp "$file" "${HOME}/${file}"
-            echo -e "\xE2\x9C\x85 ${HOME}/${file}"
-        fi
-    done
-}
-
-copy_dirs() {
-    # Copy dot directories
-    echo -e "Preparing Directories \xE2\x9E\xA1"
-    for dir in "${directories[@]}"; do
-        if [ -d "${HOME}/${dir}" ]; then
-            read -p "Do you want to overwrite ${dir}? [y/N] " overwrite
-            if [[ $overwrite =~ ^[Yy]$ ]]; then
-                # Check if we have previous copies
-                count=$(find "${HOME}" -maxdepth 1 -name "${dir}.*" | wc -l)
-                copy_num=$((count + 1))
-                # Making a backup file
-                cp -rf "${HOME}/${dir}" "${HOME}/${dir}.${copy_num}"
-                cp -rf "$dir" "${HOME}/${dir}"
-                echo -e "\xE2\x9C\x85 ${HOME}/${dir}"
-            else
-                echo "Directory ${HOME}/${dir} not overwritten in destination"
-            fi
-        else
-            cp -rf "$dir" "${HOME}/${dir}"
-            echo -e "\xE2\x9C\x85 ${HOME}/${dir}"
-        fi
-    done
-}
-
-copy_files
-copy_dirs
-
-echo 'Prepare Tmux'
-git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-~/.tmux/plugins/tpm/tpm
-tmux source ~/.tmux.conf
-~/.tmux/plugins/tpm/bin/install_plugins
-
 echo -e "Installation complete \xE2\x9A\xA1"
-

@@ -1,30 +1,40 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Setup a brand new computer
+# Setup a brand new computer by dispatching to the OS-specific script
+# under bin/setup/.
 #
 # Maintainer: asccigcc
 #
 # Usage:
 #   ./setup
 
-# Detect OS
-if [[ $(uname -s) == "Linux" ]]; then
-  # Load Linux setup
-  echo "Running on Linux"
-  if grep -q "ubuntu" /etc/os-release; then
-    # do something on Ubuntu
-    echo "Running on Ubuntu"
-  elif grep -q "fedora" /etc/os-release; then
-    # do something on Fedora
-    echo "Running on Fedora"
-  else
-    # do something else
-    echo "Unknown operating system"
-  fi
-elif [[ $(uname -s) == "Darwin" ]]; then
-  # Load MacOs setup
-  echo "Running on macOS"
-else
-  # do something else
-  echo "Unknown operating system"
+# Run from the repo root so bin/setup/* resolves from any CWD.
+cd "$(dirname "$0")"
+
+detect_os() {
+    case "$(uname -s)" in
+        Darwin) echo "macos" ;;
+        Linux)
+            if grep -qi ubuntu /etc/os-release; then
+                echo "ubuntu"
+            elif grep -qi fedora /etc/os-release; then
+                echo "fedora"
+            else
+                echo "unknown"
+            fi
+            ;;
+        *) echo "unknown" ;;
+    esac
+}
+
+os="$(detect_os)"
+script="bin/setup/${os}"
+
+if [[ "$os" == "unknown" || ! -f "$script" ]]; then
+    echo "Unsupported operating system: $(uname -s)"
+    exit 1
 fi
+
+echo "Running setup for ${os}"
+bash "$script"

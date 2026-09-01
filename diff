@@ -1,34 +1,34 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -uo pipefail
 
-# Diff between local and repository
+# Diff between local ($HOME) and repository
 #
 # Maintainer: asccigcc
 #
 # Usage:
 #   ./diff
 
-# Load config variables
+# Run from the repo root so `source config.txt` works from any CWD.
+cd "$(dirname "$0")" || exit 1
+
+# Load config variables (files, directories)
 source config.txt
 
+# `diff` exits non-zero when inputs differ; `|| true` keeps set -o pipefail happy.
 for file in "${files[@]}"; do
-  local_file="${HOME}/${file}"
-  diff_output=$(diff --color=always -u $local_file $file | cat)
-
-  if [ -n "$diff_output" ]; then
-    echo -e "\033[32mDiff ${file}\033[0m"
-    echo -e "$diff_output"
-    echo " "
-  fi
+    diff_output=$(diff -u "${HOME}/${file}" "$file" || true)
+    if [[ -n $diff_output ]]; then
+        echo -e "\033[32mDiff ${file}\033[0m"
+        echo "$diff_output"
+        echo
+    fi
 done
 
 for dir in "${directories[@]}"; do
-  local_dir="${HOME}/${dir}"
-  diff_output=$(diff --color=always -u $local_dir $dir | less | cat)
-
-  if [ -n "$diff_output" ]; then
-    echo -e "\033[32mDiff ${dir}\033[0m"
-    echo -e "$diff_output"
-    echo " "
-  fi
+    diff_output=$(diff -ru "${HOME}/${dir}" "$dir" || true)
+    if [[ -n $diff_output ]]; then
+        echo -e "\033[32mDiff ${dir}\033[0m"
+        echo "$diff_output"
+        echo
+    fi
 done
-

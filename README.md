@@ -13,31 +13,33 @@ This repository contains the following dot files:
 
 ## Usage
 
-The dotfiles provides two bash commands `install.sh` and `sync.sh` that helps to setup your
-computer terminal.
+The dotfiles provide bash commands that help you set up your computer terminal.
 
-The command supports MacOS and Linux.
+The commands support MacOS and Linux.
 
 ### Installation
 
-Just only run:
+Just run:
 
 ```
 ./install
 ```
 
-And this will setup your dot files locally.
+This copies the dot files into `$HOME` (backing up anything it overwrites) and
+bootstraps tmux. Pass `--yes` to skip the overwrite prompts.
 
 ### Sync
 
-You can sync your dot-files repo using the following command
+Sync copies dotfiles in either direction:
 
 ```
-./sync
+./sync push   # local -> repo (and scrub secrets)
+./sync pull   # repo  -> local (backs up existing files)
 ```
 
-This is useful in case that you did changes on your host computer that want to update into
-your dot-files repo.
+Use `push` when you changed files on your host computer and want them in the
+repo; use `pull` to apply the repo's files to your host. Add `--yes` to skip the
+confirmation prompts.
 
 ### Publish
 
