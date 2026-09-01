@@ -1,46 +1,46 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Sync dot-files to the git repo
+# Sync dot-files from $HOME into this git repo
+#
 # Maintainer: asccigcc
 #
 # Usage:
 #   ./sync
 
-# Prompt the user to confirm sync
-echo -e "\xE2\x9A\x99 Sync Dot-files \xE2\x9A\x99"
-echo "The following process will overwrite your git repo."
-read -p "Do you want to proceed with the dot-files sync? [y/N] " confirm
-if [[ ! $confirm =~ ^[Yy]$ ]]; then
-    echo "Syncronization cancelled"
-    exit 1
-fi
+# Run from the repo root so `source config.txt` works from any CWD.
+cd "$(dirname "$0")"
 
-# Load config variables
+echo -e "\xE2\x9A\x99 Sync Dot-files \xE2\x9A\x99"
+echo "The following process will overwrite the files tracked in this repo."
+read -rp "Do you want to proceed with the dot-files sync? [y/N] " confirm
+[[ $confirm =~ ^[Yy]$ ]] || { echo "Synchronization cancelled"; exit 1; }
+
+# Load config variables (files, directories)
 source config.txt
 
-# Copy dot files
+# Copy tracked files from $HOME into the repo
 for file in "${files[@]}"; do
-    # Check if the destination file already exists
-    echo -e "\U0001F504 Preparing sync the file: ${file}"
+    echo -e "\U0001F504 Syncing file: ${file}"
     cp "${HOME}/${file}" "$file"
-    echo "File ${HOME}/${file} copied to git repo"
 done
 
-# Copy dot directories
+# Copy tracked directories. The trailing `/.` copies dotfiles too, which a
+# bare `/*` glob would silently skip.
 for dir in "${directories[@]}"; do
-    echo -e "\U0001F504 Preparing directory ${HOME}/${dir} to sync"
-    source_dir="$HOME/$dir/*"
-    cp -rf ${source_dir} ${dir}
-    echo "Directory ${source_dir} synced"
+    echo -e "\U0001F504 Syncing directory: ${dir}"
+    cp -Rf "${HOME}/${dir}/." "${dir}/"
 done
 
-# Clean secrets
+# Clean secrets. `sed -i.bak … && rm` is portable across GNU and BSD sed;
+# plain `sed -i` behaves differently on macOS and would leave secrets in place.
 source secrets
 
 for key in "${!my_secret[@]}"; do
-    echo -e "\U0001F9F9 Cleaning Secret: $key, File: ${my_secret[$key]}"
-    sed -i "s/$key=.*/$key=/" ${my_secret[$key]}
+    file="${my_secret[$key]}"
+    echo -e "\U0001F9F9 Cleaning secret: ${key} in ${file}"
+    sed -i.bak "s/${key}=.*/${key}=/" "$file"
+    rm -f "${file}.bak"
 done
 
-echo -e "Syncronization complete \xE2\x9A\xA1"
-
+echo -e "Synchronization complete \xE2\x9A\xA1"

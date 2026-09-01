@@ -1,50 +1,42 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Publish to Git the changes and generate a new
-# tag version.
+# Publish to Git the changes and generate a new tag version.
 #
 # Maintainer: asccigcc
 #
 # Usage:
 #   ./publish [MESSAGE]
 
-# read current version
-version=$(head -n 1 VERSION)
+# Run from the repo root so VERSION resolves from any CWD.
+cd "$(dirname "$0")"
 
-echo "Preparing to publish"
+version=$(head -n 1 VERSION)
+echo "Current version: ${version}"
 
 major=$(echo "$version" | awk -F. '{print $1}')
 minor=$(echo "$version" | awk -F. '{print $2}')
 patch=$(echo "$version" | awk -F. '{print $3}')
 
-read -p "It is a major, minor or patch version? [M/m/p] " version
-if [[ "$version" == "M" ]]; then
-  major=$((major+1))
-  minor=0
-  patch=0
-elif [[ "$version" == "m" ]]; then
-  minor=$((minor+1))
-  patch=0
-else
-  patch=$((patch+1))
-fi
+read -rp "Is it a major, minor or patch version? [M/m/p] " bump
+case "$bump" in
+    M) major=$((major + 1)); minor=0; patch=0 ;;
+    m) minor=$((minor + 1)); patch=0 ;;
+    *) patch=$((patch + 1)) ;;
+esac
 
-new_version="$major.$minor.$patch"
+new_version="${major}.${minor}.${patch}"
 echo "${new_version}" > VERSION
 
-if [ "$1" ]; then
-  commit_message=$1
-else
-  commit_message="Version ${new_version}"
-fi
-
+# Use the supplied message if given, otherwise fall back to the version.
+commit_message="${1:-Version ${new_version}}"
 current_branch=$(git branch --show-current)
 
 git add .
-git commit -m "Version ${new_version}"
-git push origin ${current_branch}
+git commit -m "$commit_message"
+git push origin "$current_branch"
 
-git tag ${new_version}
-git push origin ${new_version}
+git tag "$new_version"
+git push origin "$new_version"
 
 echo "Published version ${new_version}"

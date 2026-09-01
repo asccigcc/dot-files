@@ -7,7 +7,7 @@
 ## dkp - Run docker prune
 
 echo "Do you want to proceed prune Docker? [Y/n]"
-read answer
+read -r answer
 
 if [[ "$answer" == "Y" || "$answer" == "y" ]]; then
   echo "docker prune starting"

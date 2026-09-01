@@ -1,5 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Script for Macos' initial setup
+# Script for macOS' initial setup
 #
 # Maintainer: asccigcc
+
+echo "macOS setup is not implemented yet."
+# TODO: install Homebrew, oh-my-zsh, powerlevel10k, and CLI dependencies.

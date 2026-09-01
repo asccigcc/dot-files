@@ -4,15 +4,13 @@
 
 ## commands - List commands availables
 
-commands=()
-
 echo "Zsh Scripts List"
 
-for file in $(find ~/.zsh_scripts -type f); do
-    while read line; do
-      if [[ $line == \##* ]]; then
-        cleaned="${line/###/}"
-        echo "$cleaned"
+# Lines beginning with '## ' document a command; print them without the marker.
+find ~/.zsh_scripts -type f | while read -r file; do
+    while read -r line; do
+      if [[ $line == '## '* ]]; then
+        echo "${line#'## '}"
       fi
     done < "$file"
 done
