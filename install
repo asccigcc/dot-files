@@ -1,58 +1,20 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Install and configure dot-files
+# Install and configure dot-files: place them in $HOME and bootstrap tmux.
 #
 # Maintainer: asccigcc
 #
 # Usage:
-#   ./install
+#   ./install [--yes]
 
-# Run from the repo root so `source config.txt` works from any CWD.
+# Run from the repo root so ./sync resolves from any CWD.
 cd "$(dirname "$0")"
 
 echo -e "\xE2\x9A\x99 Installing Dot-files \xE2\x9A\x99"
-echo "The following process will overwrite your current configuration."
-read -rp "Do you want to proceed with the dot-files installation? [y/N] " confirm
-[[ $confirm =~ ^[Yy]$ ]] || { echo "Installation cancelled"; exit 1; }
 
-# Load config variables (files, directories)
-source config.txt
-
-# Copy $src into $HOME/$src, backing up any existing target first.
-#   $1     - relative path (file or directory)
-#   $2..$n - flags passed to cp (e.g. -f for files, -rf for directories)
-backup_and_copy() {
-    local src="$1"; shift
-    local flags=("$@")
-    local dest="${HOME}/${src}"
-
-    if [[ -e $dest ]]; then
-        read -rp "Do you want to overwrite ${src}? [y/N] " overwrite
-        if [[ ! $overwrite =~ ^[Yy]$ ]]; then
-            echo "Skipped ${dest}"
-            return
-        fi
-        # Keep numbered backups so repeated installs never clobber a prior one.
-        local count backup
-        count=$(find "$HOME" -maxdepth 1 -name "${src}.bak.*" | wc -l | tr -d ' ')
-        backup="${dest}.bak.$((count + 1))"
-        cp "${flags[@]}" "$dest" "$backup"
-        echo "Backed up ${dest} -> ${backup}"
-    fi
-
-    cp "${flags[@]}" "$src" "$dest"
-    echo -e "\xE2\x9C\x85 ${dest}"
-}
-
-for file in "${files[@]}"; do
-    backup_and_copy "$file" -f
-done
-
-echo -e "Preparing Directories \xE2\x9E\xA1"
-for dir in "${directories[@]}"; do
-    backup_and_copy "$dir" -rf
-done
+# Copy the dotfiles into $HOME (backs up anything it overwrites).
+./sync pull "$@"
 
 echo "Prepare Tmux"
 if command -v tmux >/dev/null 2>&1; then
