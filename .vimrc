@@ -1,476 +1,554 @@
 " vimrc configuration file
-" Maintainer: asccigcc
-" Created: December 23, 2016
-" Last update: Feb 3rd, 2023
-" changelog: Updated airline and removed lightline because generate conflict.
+" Maintainer:  asccigcc
+" Created:     December 23, 2016
+" Last update: August 30, 2026
+" Version:     0.4.0
 "
-" Version: 0.1.0
+" IMPORTANT: Vim has no trailing-comment syntax after :map commands --
+" everything to end of line becomes part of the mapping's RHS. Every
+" comment below therefore sits on its own line ABOVE the mapping.
+"
 " Sections:
-"   -> Package Manager 		  [PKG]
-"   -> General 			        [GEN]
-"   -> Vim UI 			        [VUI]
-"   -> Editing			        [EDT]
-"   -> Files			          [FIL]
-"   -> Helpers              [HLP]
-"   -> Keymaps              [KEY]
-"   -> Plugin Settings      [PUG]
+"   -> Package Manager        [PKG]
+"   -> General                [GEN]
+"   -> Vim UI                 [VUI]
+"   -> Editing                [EDT]
+"   -> Files                  [FIL]
+"   -> Keymaps                [KEY]
+"   -> Plugin Settings        [PUG]
+"   -> Claude Code           [CLD]
 
 " -------------------- [PKG]
 
-" -------------------- Install Plug
-
 if empty(glob("~/.vim/autoload/plug.vim"))
   execute '!mkdir -p ~/.vim/autoload'
-  execute '!curl -fLo ~/.vim/autoload/plug.vim https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+  execute '!curl -fLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 endif
 
 call plug#begin('~/.vim/plugged')
 
 " --------------------- Navigation
+Plug 'preservim/nerdtree'
+" Only the vim plugin is managed here. The fzf binary and its base plugin
+" (which defines fzf#run) come from Homebrew via the 'rtp+=' below -- the
+" 'junegunn/fzf' Plug installed a second copy under ~/.fzf, free to drift out
+" of sync, and its './install --all' hook rewrites your shell rc files.
+Plug 'junegunn/fzf.vim'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'ervandew/supertab'
 
-Plug 'scrooloose/nerdtree' " file menu
-Plug 'junegunn/fzf.vim' " fuzzy file finder
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-Plug 'jeffkreeftmeijer/vim-numbertoggle' " auto toggling between line number modes
-Plug 'ervandew/supertab' " tab autocomplete
-
-" --------------------- Edition
-
-Plug 'tpope/vim-repeat' " Repeating supported plugin maps
-Plug 'tpope/vim-endwise' " auto end addition in ruby
-Plug 't9md/vim-ruby-xmpfilter' " inline ruby completion
-Plug 'w0rp/ale' " syntax checking and live RuboCop violations
-" Plug 'maximbaz/lightline-ale' " ALE indicator for lightline
-Plug 'vim-scripts/ReloadScript' " ReloadScript - Guard for file changes
-Plug 'tpope/vim-commentary' " Comment stuff out
-Plug 'godlygeek/tabular' " Text filtering and alignment
-Plug 'kien/rainbow_parentheses.vim' " Better Rainbow Parentheses
-Plug 'tpope/vim-surround' " Quoting/parenthesizing made simple
-Plug 'derekprior/vim-trimmer' " trim whitespace on save
-Plug 'ntpeters/vim-better-whitespace' " Highlight trailing whitespace
-Plug 'tmhedberg/matchit' " Extended % matching
+" --------------------- Editing
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-endwise'
+Plug 't9md/vim-ruby-xmpfilter'
+Plug 'dense-analysis/ale'
+Plug 'tpope/vim-commentary'
+Plug 'godlygeek/tabular'
+Plug 'tpope/vim-surround'
+Plug 'ntpeters/vim-better-whitespace'
+" rainbow_parentheses.vim was last touched in 2013 and hung three
+" 'autocmd Syntax *' handlers off every buffer. This is the maintained
+" equivalent and hooks in once.
+Plug 'luochen1990/rainbow'
+" Normal-mode verbs and text objects. All pure vimscript, ~1ms each.
+" splitjoin:  gS / gJ, one-line <-> multiline (ruby hashes, do/end, go structs)
+" targets:    ci, da( cin) -- operate on the *next* delimited region
+" unimpaired: ]q [q quickfix (ALE + vim-test land there), ]b, yo* toggles
+" abolish:    crs crc crm cru case coercion, :S case-preserving substitute
+Plug 'AndrewRadev/splitjoin.vim'
+Plug 'wellle/targets.vim'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-abolish'
 
 " --------------------- Syntax
-
-Plug 'tpope/vim-rails' " Vim support for Rails
-Plug 'sheerun/vim-polyglot' " all the syntax
-Plug 'yoheimuta/vim-protolint' " linter for protos
-Plug 'scrooloose/syntastic' " Syntax checking hacks
+Plug 'tpope/vim-rails'
+Plug 'sheerun/vim-polyglot'
 
 " --------------------- Helpers
+Plug 'janko-m/vim-test'
+Plug 'killphi/vim-ruby-refactoring'
+Plug 'tpope/vim-bundler'
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 
-Plug 'janko-m/vim-test' " vim rspec runner
-Plug 'vim-scripts/L9' " L9 provides some utility functions
-Plug 'killphi/vim-ruby-refactoring' " Vim support for refactor code
-Plug 'tpope/vim-bundler' " Vim support for Bundler
-Plug 'tpope/vim-fugitive' " Git wrapper so awesome, it should be illegal
-
-" --------------------- Appareance
-
-Plug 'ryanoasis/vim-devicons' " fancy icons in vim
-Plug 'bling/vim-airline' " Lean and mean status/tabline
-Plug 'vim-airline/vim-airline-themes' " Collection of themes for airline
+" --------------------- Appearance
+Plug 'ryanoasis/vim-devicons'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 " --------------------- Colors
-
-Plug 'altercation/vim-colors-solarized' " Port of solarized
-Plug 'whatyouhide/vim-gotham' " Code never sleeps in Gotham City
-Plug 'tomasr/molokai' " Port of monokai
-Plug 'joshdick/onedark.vim' " Port of onedark
-Plug 'morhetz/gruvbox' " Retro groove color scheme for Vim
-Plug 'baeuml/summerfruit256.vim' " Friendly with eyes
+Plug 'altercation/vim-colors-solarized'
+Plug 'whatyouhide/vim-gotham'
+Plug 'tomasr/molokai'
+Plug 'joshdick/onedark.vim'
+Plug 'morhetz/gruvbox'
+Plug 'baeuml/summerfruit256.vim'
 
 call plug#end()
+
+" matchit ships with Vim -- the standalone plugin was redundant.
+packadd! matchit
+
+" Force vim-repeat's autoload now, so <Plug>(RepeatDot) exists before the
+" <Space> mapping below is ever pressed. repeat#invalidate() is what pulls the
+" autoload in, but its body is 'autocmd! repeat_custom_motion' and vim-repeat
+" only creates that group lazily inside repeat#set() -- so on a fresh start it
+" raised E216 into v:errmsg, silenced but still set. Declaring the group first
+" makes the call clean.
+augroup repeat_custom_motion
+  autocmd!
+augroup END
+silent! call repeat#invalidate()
 
 " -------------------- [GEN]
 
 set nocompatible
-set laststatus=2
 set encoding=utf-8
+set laststatus=2
 set hidden
-set visualbell  " no sounds
-set gcr=a:blinkon0  " disable cursor blink
-set autoread " Set to auto read when a file is changed from the outside
-set history=1000 " Remember stuff
+set autoread
+set history=1000
 set undolevels=1000
+set lazyredraw
+
+" 24-bit colour. Inside tmux, Vim needs these two escapes spelled out
+" before termguicolors takes effect -- without it everything degrades to
+" 256 colours no matter what the terminal supports.
+if has('termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
 
 " -------------------- [VUI]
 
+syntax enable
 colorscheme onedark
-autocmd ColorScheme * highlight CocErrorFloat guifg=#ffffff
-autocmd ColorScheme * highlight CocInfoFloat guifg=#ffffff
-autocmd ColorScheme * highlight CocWarningFloat guifg=#ffffff
-autocmd ColorScheme * highlight SignColumn guibg=#adadad
 
-syntax enable " Syntax highlight
-hi Normal guibg=NONE ctermbg=NONE " Set transparent background
+" Re-apply after any :colorscheme so these survive a theme switch.
+augroup vimrc_colors
+  autocmd!
+  autocmd ColorScheme * highlight Normal guibg=NONE ctermbg=NONE
+  autocmd ColorScheme * highlight SignColumn guibg=NONE ctermbg=NONE
+augroup END
+highlight Normal guibg=NONE ctermbg=NONE
+highlight SignColumn guibg=NONE ctermbg=NONE
 
-" Status Line
 set showcmd
-set ruler                       " Show ruler
-set ch=2                         " Make command line two lines high
+set ruler
+set cmdheight=1
+set showmode
 
-" Interface improvments
-set novisualbell                " Disable flashes
-set t_vb=                       " No visual bell
-set noerrorbells                " Fuck bells!
-set lazyredraw                  " Don't redraw while executing macros
+" 'belloff=all' is the only one of these that silences everything. The old
+" trio did not: 't_vb=' is dead unless 'visualbell' is on (it was not), and
+" 'noerrorbells' only covers bells attached to error messages -- so Vim still
+" beeped on things like a failed search or Esc in normal mode.
+set belloff=all
 
-" Windows
-set equalalways " Multiple windows, when created, are equal in size
+" 'equalalways' was already Vim's default.
 set splitbelow splitright
 
-" Cursor highlights
 set cursorline
-set cursorcolumn
+set nocursorcolumn
 
-" highlight trailing whitespace
-match ErrorMsg '\s\+$'
 " -------------------- [EDT]
 
-" Editing position aid
 set number relativenumber
 set numberwidth=3
-set cursorline
 
-" Vim command line
-set wildmenu                    " Autocomplete in cmd
-set wildignore=*~,*.swp         " Ignore temp files
-set showcmd                     " Show partial cmd
-set cmdheight=1                 " Short cmd line
-set showmode                    " show current mode down the bottom
-set synmaxcol=128               " no syntax highlighting for lines longer than 128 cols
-" Go plugin workaround for slow edition
-set nocursorcolumn
-set re=1
+set wildmenu
+set wildignore=*~,*.swp
+
+" 128 was low enough to strip colour from ordinary long lines.
+set synmaxcol=200
 syntax sync minlines=256
 
-" Search options
-set smartcase                   " Ignore casing unless search a cased word
-set hlsearch                    " Highlight matches
-set incsearch		                " Real time match
-set magic                       " Parse regex in search
-set ignorecase                  " Ignore case when searching
+" Search
+set ignorecase
+set smartcase
+set hlsearch
+set incsearch
+set magic
 
 " Interaction
-set timeoutlen=1000 ttimeoutlen=0 " remove delay from escape key when entering normal mode
-set mouse=a " mouse scrolling in vim splits
-set regexpengine=1
+set timeoutlen=1000 ttimeoutlen=0
+set mouse=a
+set updatetime=100
+set clipboard=unnamed
 
-" Use 2-space tabs, standard
+" Indentation: 2 spaces, no tabs
 set tabstop=2
 set softtabstop=2
 set shiftwidth=2
-set modelines=1                                 " only use setting at bottom of page for this file
-
-" Use spaces for tabs
 set expandtab
 set smarttab
-
-" Indent
 set autoindent
-set smartindent
-set ai
-set si
 
-" Break long lines, per word, 80 chars per line
+set signcolumn=yes
+
 set wrap
 set linebreak
-
-" Allow backspacing over everything
 set backspace=indent,eol,start
+set modelines=1
 
-" Vim plugin for showing matching parens
+set matchpairs+=<:>
 let g:matchparen_timeout = 2
 let g:matchparen_insert_timeout = 2
-set matchpairs+=<:>
 
-" Searching
-set rtp+=/usr/local/opt/fzf " command line fuzzy finder
-set incsearch " search as characters are entered
+" fzf lives under /opt/homebrew on Apple Silicon, /usr/local on Intel.
+if isdirectory('/opt/homebrew/opt/fzf')
+  set rtp+=/opt/homebrew/opt/fzf
+elseif isdirectory('/usr/local/opt/fzf')
+  set rtp+=/usr/local/opt/fzf
+endif
 
-nnoremap \\ :noh<return> " Clear highlighting on escape in normal mode
-
-" Use spacebar to repeat last command
-nore <Space> .
-" Use . as :
-nore . :
-let mapleader = ","
+if executable('rg')
+  set grepprg=rg\ --vimgrep\ --smart-case
+  set grepformat=%f:%l:%c:%m
+endif
 
 " -------------------- [FIL]
 
-" Don't write anything but the file
 set nobackup
-set nowb
+set nowritebackup
 set noswapfile
 
-" Blowfish encryption
-setlocal cryptmethod=blowfish
+" Persistent undo -- undolevels alone is lost when the file closes.
+if has('persistent_undo')
+  let s:undodir = expand('~/.vim/undo')
+  if !isdirectory(s:undodir)
+    call mkdir(s:undodir, 'p', 0700)
+  endif
+  let &undodir = s:undodir
+  set undofile
+endif
 
-" Filetypes
+" blowfish is cryptographically broken; blowfish2 is the supported one.
+set cryptmethod=blowfish2
+
 filetype plugin indent on
-
-" Sessions - Sets what is saved when you save a session
 set sessionoptions=blank,buffers,curdir,folds,help,resize,tabpages,winsize
 
-" autocmd!
-let ruby_fold=1
-autocmd FileType ruby normal zR
-autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-autocmd FileType python set omnifunc=pythoncomplete#Complete
-autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-autocmd FileType php set omnifunc=phpcomplete#CompletePHP
-autocmd FileType c set omnifunc=ccomplete#Complete
-autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-autocmd FileType haml set omnifunc=hamlcomplete#Complete
-autocmd FileType yaml set omnifunc=yamlcomplete#Complete
-autocmd FileType sass set omnifunc=sasscomplete#Complete
-autocmd FileType go autocmd BufWritePre <buffer> GoFmt
-autocmd FileType text setlocal textwidth=80
-autocmd FileType asciidoc setlocal textwidth=80
-" Don't change tabs for spaces in Makefiles
-autocmd FileType make setlocal noexpandtab
+" The old omnifunc block was removed: Vim's own ftplugins already set
+" html/css/javascript/php/ruby/python correctly, while hamlcomplete,
+" yamlcomplete and sasscomplete do not exist in Vim 9 and the python
+" line downgraded completion to the Python 2 implementation.
 
-" Set [...] to 2-space indent
-set sts=2 ts=2 sw=2
+let ruby_fold = 1
 
-" Set SASS to SASS. Duh
-autocmd! BufRead,BufNewFile *.sass setfiletype sass
-
-" Delete trailing white space on sav
-func! DeleteTrailingWS()
-	exe "normal mz"
-	%s/\s\+$//ge
-	exe "normal `z"
-endfunc
-
-" autocmd BufWrite *.py :call DeleteTrailingWS()
-" autocmd BufWrite *.coffee :call DeleteTrailingWS()
-" autocmd BufWrite *.txt :call DeleteTrailingWS()
-
-" -------------------- [HLP]
+augroup vimrc_filetypes
+  autocmd!
+  autocmd FileType text,asciidoc setlocal textwidth=80
+  autocmd FileType make setlocal noexpandtab
+  autocmd BufRead,BufNewFile *.sass setfiletype sass
+  " Folds are computed but start open, replacing an autocmd that ran zR.
+  autocmd FileType ruby setlocal foldlevel=99
+  " vim-surround ERB wrappers must be buffer-local, so they belong here
+  " rather than at global scope where they only hit the first buffer.
+  autocmd FileType eruby let b:surround_{char2nr('=')} = "<%= \r %>"
+  autocmd FileType eruby let b:surround_{char2nr('-')} = "<% \r %>"
+augroup END
 
 " -------------------- [KEY]
 
-" easy navigation between splits
+let mapleader = ","
+
+" Window navigation
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-" Handy commands
-map <Leader>bi :!bundle install<cr> " bundle install in vim
-nmap <leader>bp orequire 'pry'; binding.pry<esc>^ " insert ruby debugger
-nmap <leader>db odebugger;<esc>^ " insert js debugger
-" Buffer keymaps
-map <Leader>bn :bnext<cr>
-map <Leader>bm :bprevious<cr>
-map <Leader>bd :bdelete<cr>
-map <Leader>bf :Buffers<cr>
-" map <Leader>p :set paste<CR><esc>"*]p:set nopaste<cr>   " automate clipboard copy/paste indentation
-" vmap <C-x> :!pbcopy<CR>
-" vmap <C-c> :w !pbcopy<CR><CR>
-" map <Leader>sp :!bundle exec rspec spec<cr> " run bundle exec rspec
+" '.' is easier to reach than ':', so they are swapped. Repeat moves to
+" <Space>, routed through <Plug>(RepeatDot) for two reasons: it picks up
+" plugin repeats from vim-surround/commentary, and satisfying
+" hasmapto() stops vim-repeat from silently reclaiming '.' the first
+" time any tpope plugin calls repeat#set().
+nnoremap . :
+nmap <Space> <Plug>(RepeatDot)
 
-" Paste from the clipboard without indenting
-" set pastetoggle=<Leader>p
+" Fast vertical motion. J/K's originals are restored below.
+nnoremap J 5j
+nnoremap K 5k
+xnoremap J 5j
+xnoremap K 5k
 
-" Navigation keymaps
-nmap J 5j
-nmap K 5k
-xmap J 5j
-xmap K 5k
+" Join lines and keyword lookup, displaced by the J/K maps above.
+nnoremap <Leader>J J
+nnoremap <Leader>K K
 
-" Tab keymaps
-map <leader>tn :tabnew<cr>
-map <leader>tc :tabclose<cr>
+" Open a blank line without leaving normal mode. This used to live on
+" o/O directly, which made them unusable for ordinary insertion and
+" broke the debugger mappings below. <Leader>o belongs to fzf :Files,
+" so these use the vim-unimpaired convention instead.
+nnoremap ]<Space> o<Esc>
+nnoremap [<Space> O<Esc>
 
-" Dismiss search highlight
-nmap <Leader><Space> :nohl<cr>
+" Clear search highlight
+nnoremap <Leader><Space> :nohlsearch<CR>
+nnoremap \\ :nohlsearch<CR>
 
-" Giga save. Handle with care
-nmap <leader>ww :wall!<cr>
-nmap <leader>wq :wqall!<cr>
-nmap <leader>qq :qall!<cr>
+" Ruby / JS debugger insertion
+nnoremap <Leader>bp orequire 'pry'; binding.pry<Esc>^
+nnoremap <Leader>db odebugger;<Esc>^
 
-" Insert a new-line and esc
-nnoremap o o<Esc>
-nnoremap O O<Esc>
+" Bundler
+nnoremap <Leader>bi :!bundle install<CR>
+
+" Buffers
+nnoremap <Leader>bn :bnext<CR>
+nnoremap <Leader>bm :bprevious<CR>
+nnoremap <Leader>bd :bdelete<CR>
+nnoremap <Leader>bf :Buffers<CR>
+
+" Tabs
+nnoremap <Leader>tn :tabnew<CR>
+nnoremap <Leader>tc :tabclose<CR>
+
+" Write / quit everything
+nnoremap <Leader>ww :wall!<CR>
+nnoremap <Leader>wq :wqall!<CR>
+nnoremap <Leader>qq :qall!<CR>
 
 " -------------------- [PUG]
 
-" Tabularize --------------
-if exists(":Tabularize")
-  nmap <Leader>a= :Tabularize /=<CR>
-  vmap <Leader>a= :Tabularize /=<CR>
-  nmap <Leader>a: :Tabularize /:\zs<CR>
-  vmap <Leader>a: :Tabularize /:\zs<CR>
-endif
+" Tabularize. Moved off <Leader>a= / <Leader>a: because <Leader>a is
+" TestSuite, which forced a timeoutlen wait on every alignment.
+nnoremap <Leader>= :Tabularize /=<CR>
+xnoremap <Leader>= :Tabularize /=<CR>
+nnoremap <Leader>: :Tabularize /:\zs<CR>
+xnoremap <Leader>: :Tabularize /:\zs<CR>
 
-" Show syntax highlighting groups for word under cursor
-" By VimCasts
-nmap <leader>s :call <SID>SynStack()<CR>
-function! <SID>SynStack()
-	if !exists("*synstack")
-		return
-	endif
-	echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-endfunc
-
-" closetag
-let b:closetag_html_style = 1
-let b:unaryTagsStack = ''
+" Show the syntax groups under the cursor. Was on <Leader>s, which
+" TestNearest shadowed completely.
+function! s:SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echo map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunction
+nnoremap <Leader>? :call <SID>SynStack()<CR>
 
 " NERDTree
-:noremap <Leader>n :NERDTreeToggle<CR>
-:noremap <Leader>N :NERDTreeFind<CR>
-let NERDTreeHijackNetrw=0 " User instead of Netrw when doing an edit /foobar
-let NERDTreeMouseMode=1 " Single click for everything
-let NERDCreateDefaultMappings=0 " I turn this off to make it simple
+nnoremap <Leader>n :NERDTreeToggle<CR>
+nnoremap <Leader>N :NERDTreeFind<CR>
+let NERDTreeHijackNetrw = 0
+let NERDTreeMouseMode = 1
+let NERDCreateDefaultMappings = 0
 let g:NERDTreeWinPos = "right"
-let NERDTreeShowHidden=1  " Show hidden files
+let NERDTreeShowHidden = 1
 let NERDTreeDirArrows = 1
-let NERDTreeMinimalUI = 1  " minimal ui
-let NERDTreeAutoDeleteBuffer = 1  " auto delete buffer of file deleted
-let NERDTreeIgnore = ['\.DS_Store']   " ignore index files
-" let g:NERDTreeQuitOnOpen=1 " close nerdtree when open file
+let NERDTreeMinimalUI = 1
+let NERDTreeAutoDeleteBuffer = 1
+let NERDTreeIgnore = ['\.DS_Store']
 
-set encoding=UTF-8
 set guifont=DroidSansMono\ Nerd\ Font:h11
 
-" fugitive
-map <Leader>ggs :Gstatus<CR>
-map <Leader>ggc :Gcommit<CR>
-map <Leader>ggb :Gblame<CR>
-" add the current file to commit
-map <Leader>gga :Gwrite<CR>
-map <Leader>ggd :Gdiff<CR>
+" Fugitive. :Gstatus/:Gcommit/:Gblame were renamed in fugitive 3.
+nnoremap <Leader>ggs :Git<CR>
+nnoremap <Leader>ggc :Git commit<CR>
+nnoremap <Leader>ggb :Git blame<CR>
+nnoremap <Leader>gga :Gwrite<CR>
+nnoremap <Leader>ggd :Gdiffsplit<CR>
 
-" railsvim
-map <Leader>ra :AS<CR>
-map <Leader>rs :RS<CR>
+" vim-rails alternate/related. Moved off <Leader>ra / <Leader>rs, which
+" <Leader>r (TestFile) delayed by a full timeoutlen.
+nnoremap <Leader>A :A<CR>
+nnoremap <Leader>R :R<CR>
 
-" space-r runs current spec file
-map <Leader>r :TestFile<CR>
-"space-s runs nearest spec
-map <Leader>s :TestNearest<CR>
-" space-a runs all specs
-map <Leader>a :TestSuite<CR>
+" vim-ruby-refactoring claimed the whole <Leader>r namespace (,rap ,rapn ,rit
+" ,rel ,relv ,rcpc ,riv), which made <Leader>r below -- TestFile, the most
+" pressed key here -- sit through a full timeoutlen before firing. Its :R*
+" commands (:RExtractLet, :RInlineTemp, ...) still work; only the maps are off.
+let g:ruby_refactoring_map_keys = 0
 
-let test#strategy = "basic" " execute test commands in a split window
+" vim-test
+nnoremap <Leader>r :TestFile<CR>
+nnoremap <Leader>s :TestNearest<CR>
+nnoremap <Leader>a :TestSuite<CR>
+let test#strategy = "vimterminal"
+let g:test#vimterminal#term_position = "botright"
 
-" open files extra files in hidden buffers
-let g:ctrlp_open_multiple_files = '1jr'
 " fzf
-" remap fuzzy finder to ctrl-t
-nnoremap <leader>o :Files<CR>
-
+nnoremap <Leader>o :Files<CR>
+nnoremap <Leader>f :Rg<CR>
+nnoremap <Leader>F :Rg <C-R><C-W><CR>
 let g:fzf_layout = { 'down': '40%' }
-
-if executable('ag')
-  set grepprg=ag\ --nogroup\ --nocolor " Use ag over grep
-endif
-
-" Switch
-nnoremap - :Switch<cr>
 
 " Airline
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1 " enable top tabs
-let g:airline#extensions#tabline#buffer_nr_show = 1 " show buffer number
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline_theme = 'minimalist'
 
-" Rainbow Parentheses
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+" Rainbow parentheses. :RainbowToggle turns it off per buffer.
+let g:rainbow_active = 1
 
-" Syntastic
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
+" GitGutter. It reads git asynchronously, so the cost is off the main loop.
+let g:gitgutter_map_keys = 0
+nnoremap <Leader>hs :GitGutterStageHunk<CR>
+nnoremap <Leader>hu :GitGutterUndoHunk<CR>
+nnoremap <Leader>hp :GitGutterPreviewHunk<CR>
+" ]h / [h rather than GitGutter's default ]c / [c: those two are Vim's builtin
+" next/prev-change in diff mode, and <Leader>ggd above opens :Gdiffsplit --
+" taking them broke diff navigation exactly where diffs get used. 'h' also
+" matches the <Leader>h* hunk maps above.
+nmap ]h <Plug>(GitGutterNextHunk)
+nmap [h <Plug>(GitGutterPrevHunk)
 
-" Better whitespace
-autocmd BufWritePre * StripWhitespace
+" splitjoin takes gJ by default, which shadows the built-in join-without-space.
+" gJ stays vim's; splitjoin's join moves next to its split on gS.
+let g:splitjoin_join_mapping = ''
+let g:splitjoin_split_mapping = ''
+nnoremap gS :SplitjoinSplit<CR>
+nnoremap gK :SplitjoinJoin<CR>
 
-" autocomplete
-let g:AutoComplPop_IgnoreCaseOption = 0
-let g:AutoComplPop_BehaviorKeywordLength = 2
+" Better whitespace. vim-trimmer was removed -- both stripped on save.
+"
+" The plugin's own save hook, not a 'BufWritePre * StripWhitespace'. The
+" command strips unconditionally; the hook honours
+" better_whitespace_filetypes_blacklist (diff, git, gitcommit, markdown, help,
+" qf, fugitive). That distinction matters: stripping markdown silently deletes
+" two-space hard line breaks, and stripping gitcommit rewrites the message
+" buffer git handed you.
+let g:strip_whitespace_on_save = 1
+" The hook asks for confirmation by default, which the old autocmd never did.
+let g:strip_whitespace_confirm = 0
 
-" Ale ------------------
+" ALE. Syntastic was removed: running two linting frameworks at once
+" double-linted every buffer and cost ~16ms of startup.
+"
+" Timing matters more than the linter list here. The default lints on every
+" keystroke, and brakeman -- the one heavy tool that was actually installed --
+" scans the whole project at ~1s a run. Insert-leave plus save is the cadence
+" that gives the same answers without the drag.
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_enter = 1
+let g:ale_fix_on_save = 1
+
+" Only linters named below run. Without this ALE also runs everything it can
+" autodetect, which is how brakeman and friends creep back in.
+let g:ale_linters_explicit = 1
+
+" rubocop 1.31+ keeps a resident server, so each lint skips the ~1s of booting
+" rubocop itself. This is what makes lint-on-save feel immediate.
+let g:ale_ruby_rubocop_options = '--server'
+
+let g:ale_sign_error = '>>'
+let g:ale_sign_warning = '--'
+let g:ale_echo_msg_format = '[%linter%] %s'
+
 let g:ale_fixers = {
- \   'go': ['gofmt'],
- \   'javascript': ['eslint', 'prettier'],
+ \   'go': ['goimports'],
+ \   'python': ['ruff_format', 'ruff'],
+ \   'sh': ['shfmt'],
  \   'ruby': ['rubocop'],
+ \   'javascript': ['prettier'],
  \   'vue': ['prettier'],
+ \   'json': ['prettier'],
  \   'yaml': ['prettier']
  \}
 
+" rubocop's autocorrect is style-opinionated and project-dependent -- letting
+" it rewrite on every save turns one-line edits into large diffs on any repo
+" whose .rubocop.yml disagrees with yours. It stays on <Leader>\, deliberate.
+" gofmt/ruff/shfmt/prettier are canonical formatters, so those do run on save.
+let g:ale_fix_on_save_ignore = { 'ruby': ['rubocop'] }
+
+" 'erb' was never a filetype -- .html.erb detects as 'eruby', so that entry
+" never fired. 'prettier' was listed as a linter, but it is a fixer and ALE
+" ignored it. golint was archived by the Go team in 2021; gopls replaces it
+" and starts lazily per Go buffer, so it costs nothing at startup.
 let g:ale_linters = {
- \   'go': ['golint'],
- \   'javascript': ['eslint', 'prettier'],
- \   'erb': ['erb'],
- \   'ruby': ['rubocop', 'sorbet', 'brakeman', 'rails_best_practices']
+ \   'go': ['gopls', 'govet'],
+ \   'python': ['ruff'],
+ \   'sh': ['shellcheck'],
+ \   'ruby': ['rubocop'],
+ \   'eruby': ['erb'],
+ \   'slim': ['slimlint'],
+ \   'yaml': ['yamllint'],
+ \   'javascript': ['eslint']
  \}
 
-" Bind Leader to fixing problems with ALE
 nmap <Leader>\ <Plug>(ale_fix)
-" vim-gitgutter --------------------
-set updatetime=100
 
-"vim-surround ----------------------
-let b:surround_{char2nr('=')} = "<%= \r %>"                       " `ctrl-s =` to insert print erb
-let b:surround_{char2nr('-')} = "<% \r %>"                              " `ctrl-s -` to insert erb
-"---------------- closetag -----------------------------------------------------------------------
-let g:closetag_filenames = "*.html.erb,*.html"                  " tag completion for erb files too
-"---------------- vim-auto-save ------------------------------------------------------------------
-let g:auto_save = 1                                               " enable AutoSave on Vim startup
-"---------------- indentLine ---------------------------------------------------------------------
-let g:indentLine_color_term = 239                                  " indentation lines more subtleS
+" ALE populates the location list; these walk it. (]q / [q from unimpaired
+" walk the quickfix list, which is where vim-test puts failures.)
+nmap ]a <Plug>(ale_next_wrap)
+nmap [a <Plug>(ale_previous_wrap)
+" On <Leader>e, not <Leader>ad: any <Leader>a? mapping makes <Leader>a
+" (TestSuite) wait out timeoutlen, since it is then only a prefix.
+nnoremap <Leader>e :ALEDetail<CR>
 
-" Tagbar ------------
-"  the F8 key will toggle the Tagbar window
-nmap <F8> :TagbarToggle<CR>
+" brakeman is a project-wide security scan, not a buffer linter -- wrong shape
+" for ALE, which is why it cost a second per keystroke. On demand instead.
+nnoremap <Leader>bs :botright new <Bar> terminal brakeman -q --no-progress<CR>
 
-" " Lightline -------------------
-" let g:lightline = {
-"       \ 'colorscheme': 'seoul256',
-"       \ 'active': {
-"       \   'left': [ [ 'mode', 'paste' ],
-"       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ],
-"       \   'right': [ [ 'lineinfo' ],
-"       \              [ 'linter_checking', 'linter_errors', 'linter_warnings', 'linter_ok' ],
-"       \              [ 'filetype', 'fileencoding'] ]
-"       \ },
-"       \ 'component_function': {
-"       \   'gitbranch': 'fugitive#head'
-"       \ },
-"       \ 'component_expand': {
-"       \   'linter_checking': 'lightline#ale#checking',
-"       \   'linter_warnings': 'lightline#ale#warnings',
-"       \   'linter_errors': 'lightline#ale#errors',
-"       \   'linter_ok': 'lightline#ale#ok'
-"       \ },
-"       \ 'component_type': {
-"       \   'linter_checking': 'left',
-"       \   'linter_warnings': 'warning',
-"       \   'linter_errors': 'error',
-"       \   'linter_ok': 'left'
-"       \ }
-"       \}
+" Terminal splits
+nnoremap <Leader>tv :botright vnew <Bar> terminal<CR>
+nnoremap <Leader>th :botright new <Bar> terminal<CR>
 
-" let g:lightline#ale#indicator_checking = "\uf110"                " indicator icons
-" let g:lightline#ale#indicator_warnings = "\uf071  "              " whitespace intentional
-" let g:lightline#ale#indicator_errors = "\uf05e    "              " whitespace intentional
-" let g:lightline#ale#indicator_ok = "\uf00c"
+" -------------------- [CLD]
 
-" terminal
-noremap <leader>tv :botright vnew <Bar> :terminal<cr>
-noremap <leader>th :botright new <Bar> :terminal<cr>
-" Terminal exit mapping
-" :tnoremap <Esc> <C-\><C-n>
-" Open terminal mapping
+" Claude edits files on disk, outside Vim. 'autoread' alone never notices:
+" it only re-checks on a handful of events, so a buffer you are looking at
+" goes stale and the next :w silently overwrites what Claude just wrote.
+" checktime forces the check. Skipped in command-line/terminal modes, where
+" reloading a buffer underneath you is disruptive rather than helpful.
+augroup vimrc_autoread
+  autocmd!
+  autocmd FocusGained,BufEnter,CursorHold *
+        \ if mode() !~# '[crt!]' && empty(getcmdwintype()) | silent! checktime | endif
+  autocmd FileChangedShellPost *
+        \ echohl WarningMsg | echo 'Buffer reloaded -- file changed on disk' | echohl None
+augroup END
 
-" :imap ii <Esc>
+" Root Claude at the repo, not the file's directory, so it picks up CLAUDE.md
+" and can see the whole tree.
+" FugitiveWorkTree() rather than finddir('.git', ...): in a git worktree or a
+" submodule '.git' is a *file*, so finddir found nothing and the root fell back
+" to the cwd -- pointing Claude at whatever directory Vim happened to start in.
+" Fugitive is already loaded and handles all three layouts.
+function! s:ClaudeRoot() abort
+  let l:root = exists('*FugitiveWorkTree') ? FugitiveWorkTree() : ''
+  return empty(l:root) ? getcwd() : l:root
+endfunction
+
+" a:args is a List of argv entries, and term_start() takes a List for a reason:
+" ':terminal' splits its command on whitespace and never goes through a shell,
+" so shellescape() was actively wrong here -- it passed the literal quotes
+" through as text. A question came out as [ 'what | is | this | @file.rb' ],
+" leaving a stray apostrophe glued to the path so the @-reference never
+" resolved. A List hands each argument over verbatim, no quoting involved.
+function! s:ClaudeTerm(args) abort
+  botright vertical call term_start(['claude'] + a:args, { 'cwd': s:ClaudeRoot() })
+endfunction
+
+" Compose the question in Vim -- where you have your own editing keys -- then
+" hand it over with an @-reference so Claude reads the file itself. Piping the
+" buffer text through the shell would fight quoting to no benefit, and Claude
+" resolves @paths against the repo root anyway.
+function! s:ClaudeAsk(ref) abort
+  if empty(expand('%:.'))
+    echohl WarningMsg | echo 'No file in this buffer' | echohl None
+    return
+  endif
+  let l:q = input('claude ' . a:ref . ' > ')
+  redraw
+  if empty(l:q)
+    return
+  endif
+  " One argv entry -- claude takes the whole prompt as a single argument.
+  call s:ClaudeTerm([l:q . ' ' . a:ref])
+endfunction
+
+" Bare session, and resume the last one in this directory.
+nnoremap <Leader>cc :call <SID>ClaudeTerm([])<CR>
+nnoremap <Leader>cr :call <SID>ClaudeTerm(['--continue'])<CR>
+
+" Ask about the current file, or about the visual selection by line range.
+nnoremap <Leader>ca :call <SID>ClaudeAsk('@' . expand('%:.'))<CR>
+xnoremap <Leader>ca :<C-u>call <SID>ClaudeAsk('@' . expand('%:.')
+      \ . ' (lines ' . line("'<") . '-' . line("'>") . ')')<CR>
