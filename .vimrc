@@ -25,6 +25,13 @@ if empty(glob("~/.vim/autoload/plug.vim"))
   execute '!curl -fLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 endif
 
+" ALE drives omni-completion off each language server; for Go, gopls gives
+" as-you-type completion (supertab routes <Tab> through omnifunc). Only
+" filetypes with an LSP light up -- ruby/python here lint via rubocop/ruff,
+" not a server, so this is effectively Go completion. Must be set before ALE
+" loads, hence up here rather than in the ALE block far below.
+let g:ale_completion_enabled = 1
+
 call plug#begin('~/.vim/plugged')
 
 " --------------------- Navigation
@@ -247,6 +254,15 @@ augroup vimrc_filetypes
   " rather than at global scope where they only hit the first buffer.
   autocmd FileType eruby let b:surround_{char2nr('=')} = "<%= \r %>"
   autocmd FileType eruby let b:surround_{char2nr('-')} = "<% \r %>"
+  " Go leans on the language server far more than Ruby: gopls powers these.
+  " Buffer-local so they never shadow the global maps elsewhere -- K in
+  " particular is the 5k motion, so hover lives on gh, not K. :make runs
+  " `go build` through the bundled go compiler (quickfix gets the errors);
+  " tests stay on vim-test, which already speaks `go test`.
+  autocmd FileType go compiler go
+  autocmd FileType go nnoremap <buffer> <silent> gd :ALEGoToDefinition<CR>
+  autocmd FileType go nnoremap <buffer> <silent> gr :ALEFindReferences<CR>
+  autocmd FileType go nnoremap <buffer> <silent> gh :ALEHover<CR>
 augroup END
 
 " -------------------- [KEY]
@@ -462,7 +478,7 @@ let g:ale_fix_on_save_ignore = { 'ruby': ['rubocop'] }
 " ignored it. golint was archived by the Go team in 2021; gopls replaces it
 " and starts lazily per Go buffer, so it costs nothing at startup.
 let g:ale_linters = {
- \   'go': ['gopls', 'govet'],
+ \   'go': ['gopls', 'govet', 'golangci-lint'],
  \   'python': ['ruff'],
  \   'sh': ['shellcheck'],
  \   'ruby': ['rubocop'],
