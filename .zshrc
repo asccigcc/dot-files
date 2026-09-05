@@ -1,21 +1,14 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+# export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
 
-# Path to your oh-my-zsh installation.
+# Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
+# load a random theme each time Oh My Zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -77,21 +70,26 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-
-# Get operating system name
-os="$(uname -s)"
-
-if [[ "$os" == "Darwin" ]]; then
+# Note: zsh-syntax-highlighting must be the LAST plugin in this list.
 plugins=(
   git
-  zsh-syntax-highlighting
-  zsh-autosuggestions
-  autojump
+  fzf
+  bundler
+  rails
+  ruby
+  docker
+  docker-compose
   brew
+  gh
+  npm
+  node
+  macos
+  colored-man-pages
+  extract
+  history
+  zsh-autosuggestions
+  zsh-syntax-highlighting
 )
-elif [[ "$os" == "Linux" ]]; then
-  plugins=(git)
-fi
 
 source $ZSH/oh-my-zsh.sh
 
@@ -103,34 +101,52 @@ source $ZSH/oh-my-zsh.sh
 # export LANG=en_US.UTF-8
 
 # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+export EDITOR='vim'
+export VISUAL='vim'
 
 # Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+# export ARCHFLAGS="-arch $(uname -m)"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# Set personal aliases, overriding those provided by Oh My Zsh libs,
+# plugins, and themes. Aliases can be placed here, though Oh My Zsh
+# users are encouraged to define aliases within a top-level file in
+# the $ZSH_CUSTOM folder, with .zsh extension. Examples:
+# - $ZSH_CUSTOM/aliases.zsh
+# - $ZSH_CUSTOM/macos.zsh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+export GPG_TTY=$(tty)
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/pastorinni/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/pastorinni/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/pastorinni/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/pastorinni/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 
-# Load env variables and paths
-source ~/.zshrc_env
-# Scripts
-alias commands='~/.zsh_scripts/command.sh'
 
-# Docker
-alias dkp='~/.zsh_scripts/docker/prune.sh'
-alias dkps='~/.zsh_scripts/docker/ps.sh'
+# asdf version manager (shims must be on PATH; asdf 0.16+ no longer sources a script)
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/pastorinni/.antigravity/antigravity/bin:$PATH"
+export PATH="$HOME/.local/bin:$PATH"
+
+
+# Go binaries
+export PATH="$HOME/go/bin:$PATH"
+
+# Added by Antigravity IDE
+export PATH="/Users/pastorinni/.antigravity-ide/antigravity-ide/bin:$PATH"
