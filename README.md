@@ -6,10 +6,14 @@ This is my personal Dotfiles that I use. Feel free to download or clone if you l
 
 This repository contains the following dot files:
 
-- Github
-- Vim
-- Zsh
-- Tmux
+- **Git** (`.gitconfig`) — aliases, colors, and GPG commit/tag signing. The
+  signing key itself is kept out of the repo (see [Machine-local config](#machine-local-config)).
+- **Vim** (`.vimrc`) — vim-plug setup with ALE-driven LSP. Ruby and Go both get
+  linting, format-on-save, completion, and go-to-definition; Go uses `gopls`
+  (`gd` definition, `gr` references, `gh` hover) plus `golangci-lint`.
+- **Zsh** (`.zshrc`) — Oh My Zsh with a curated plugin set.
+- **Tmux** (`.tmux.conf`, `.tmux/scripts/`) — config plus helper scripts;
+  plugins are managed by [tpm](https://github.com/tmux-plugins/tpm) at install time.
 
 ## Usage
 
@@ -60,6 +64,22 @@ This command shows if we have diff between local and git directory files/dirs
 ```
 
 Returns data in case of differences.
+
+## Machine-local config
+
+Some settings are host-specific or private and are deliberately **not tracked**:
+
+- **`~/.gitconfig.local`** — holds `user.signingkey` for GPG signing. The tracked
+  `.gitconfig` pulls it in via `[include]`, and Git silently skips it if it's
+  absent. On a new machine, create it so commit signing works:
+
+  ```
+  [user]
+      signingkey = <YOUR_KEY_ID>
+  ```
+
+Which files get synced is defined in `config.txt`; values to blank out on
+`./sync push` are listed in `secrets`.
 
 ## License
 
