@@ -50,3 +50,11 @@
 	name = Pastorinni Ochoa
 [core]
 	editor = vim
+[commit]
+	gpgsign = true
+[tag]
+	gpgSign = true
+# Machine-local, untracked: holds user.signingkey (and anything else private).
+# Git silently skips this include if the file is absent, so the repo stays portable.
+[include]
+	path = ~/.gitconfig.local
