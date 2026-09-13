@@ -108,6 +108,9 @@ backup_and_copy() {
 # across GNU and BSD sed; plain `sed -i` behaves differently on macOS.
 scrub_secrets() {
     source secrets
+    # No secrets to scrub — and bash 3.2 (macOS) errors on expanding an empty
+    # array under `set -u`, so bail before the loop.
+    [[ ${#secrets[@]} -eq 0 ]] && return 0
     local entry key file
     for entry in "${secrets[@]}"; do
         key="${entry%%:*}"
