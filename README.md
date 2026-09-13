@@ -14,6 +14,8 @@ This repository contains the following dot files:
 - **Zsh** (`.zshrc`) — Oh My Zsh with a curated plugin set.
 - **Tmux** (`.tmux.conf`, `.tmux/scripts/`) — config plus helper scripts;
   plugins are managed by [tpm](https://github.com/tmux-plugins/tpm) at install time.
+- **asdf** (`.tool-versions`) — global runtime version pins (e.g. Ruby).
+- **Global git ignore** (`.config/git/ignore`) — patterns ignored across all repos.
 
 ## Usage
 

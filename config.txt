@@ -1,3 +1,3 @@
 
-files=(".vimrc" ".zshrc" ".gitconfig" ".tmux.conf")
-directories=(".tmux")
+files=(".vimrc" ".zshrc" ".gitconfig" ".tmux.conf" ".tool-versions")
+directories=(".tmux" ".config/git")
