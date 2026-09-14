@@ -12,6 +12,8 @@ This repository contains the following dot files:
   linting, format-on-save, completion, and go-to-definition; Go uses `gopls`
   (`gd` definition, `gr` references, `gh` hover) plus `golangci-lint`.
 - **Zsh** (`.zshrc`) — Oh My Zsh with a curated plugin set.
+- **Bash** (`.bashrc`) — Oh My Bash (when installed) plus the Go/asdf/`~/.local/bin`
+  PATH; mainly for the Debian boxes, which run bash.
 - **Tmux** (`.tmux.conf`, `.tmux/scripts/`) — config plus helper scripts;
   plugins are managed by [tpm](https://github.com/tmux-plugins/tpm) at install time.
 - **asdf** (`.tool-versions`) — global runtime version pins (e.g. Ruby).
