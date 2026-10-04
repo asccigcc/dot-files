@@ -19,6 +19,11 @@ This repository contains the following dot files:
 - **asdf** (`.tool-versions`) — global runtime version pins (e.g. Ruby).
 - **Global git ignore** (`.config/git/ignore`) — patterns ignored across all repos.
 
+macOS only (listed under `macos_files` in `config.txt`; skipped on other systems):
+
+- **Zsh login** (`.zprofile`) — Homebrew `shellenv`.
+- **VSCodium** (`Library/Application Support/VSCodium/User/settings.json`) — editor settings.
+
 ## Usage
 
 The dotfiles provide bash commands that help you set up your computer terminal.

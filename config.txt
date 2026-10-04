@@ -1,3 +1,5 @@
 
 files=(".vimrc" ".zshrc" ".bashrc" ".gitconfig" ".tmux.conf" ".tool-versions")
 directories=(".tmux" ".config/git")
+# Synced only on macOS (Homebrew login shell, ~/Library app settings).
+macos_files=(".zprofile" "Library/Application Support/VSCodium/User/settings.json")

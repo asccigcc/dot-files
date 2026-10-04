@@ -39,6 +39,8 @@ fi
 
 # Load config variables (files, directories)
 source config.txt
+# Fold in the macOS-only files on Darwin; elsewhere they don't apply.
+[[ $(uname -s) == Darwin ]] && files+=("${macos_files[@]}")
 
 # Emit rsync --exclude args for a directory from .gitignore entries that fall
 # under it, e.g. ".tmux/plugins/*" -> "--exclude=plugins/*" for dir ".tmux".
@@ -65,6 +67,7 @@ sync_dir() {
 push() {
     for file in "${files[@]}"; do
         echo -e "\U0001F504 push file: ${file}"
+        mkdir -p "$(dirname "$file")"
         cp "${HOME}/${file}" "$file"
     done
     for dir in "${directories[@]}"; do
@@ -94,12 +97,15 @@ backup_and_copy() {
             echo "Skipped ${dest}"
             return
         fi
+        # Count backups beside the target (nested paths live below $HOME).
         local count backup
-        count=$(find "$HOME" -maxdepth 1 -name "${src}.bak.*" | wc -l | tr -d ' ')
+        count=$(find "$(dirname "$dest")" -maxdepth 1 -name "$(basename "$src").bak.*" | wc -l | tr -d ' ')
         backup="${dest}.bak.$((count + 1))"
         cp "$dest" "$backup"
         echo "Backed up ${dest} -> ${backup}"
     fi
+    # Fresh machines may lack the parent (e.g. VSCodium never launched).
+    mkdir -p "$(dirname "$dest")"
     cp "$src" "$dest"
     echo -e "\U0001F504 pull file: ${src}"
 }

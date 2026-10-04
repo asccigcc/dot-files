@@ -13,6 +13,8 @@ cd "$(dirname "$0")" || exit 1
 
 # Load config variables (files, directories)
 source config.txt
+# Fold in the macOS-only files on Darwin; elsewhere they don't apply.
+[[ $(uname -s) == Darwin ]] && files+=("${macos_files[@]}")
 
 # `diff` exits non-zero when inputs differ; `|| true` keeps set -o pipefail happy.
 for file in "${files[@]}"; do

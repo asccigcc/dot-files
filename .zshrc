@@ -121,27 +121,23 @@ export VISUAL='vim'
 
 export GPG_TTY=$(tty)
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/homebrew/Caskroom/miniconda/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-        . "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/homebrew/Caskroom/miniconda/base/bin:$PATH"
+# conda — Homebrew's miniconda cask or the installer script's ~/miniconda3
+# (what os-recipies' macos.sh uses); hook whichever this machine has.
+# Hand-written on purpose: re-running `conda init` would re-add a hardcoded block.
+for _conda in /opt/homebrew/Caskroom/miniconda/base "$HOME/miniconda3"; do
+    if [ -x "$_conda/bin/conda" ]; then
+        eval "$("$_conda/bin/conda" shell.zsh hook 2>/dev/null)"
+        break
     fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+done
+unset _conda
 
 
 # asdf version manager (shims must be on PATH; asdf 0.16+ no longer sources a script)
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
 
 # Added by Antigravity
-export PATH="/Users/pastorinni/.antigravity/antigravity/bin:$PATH"
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
 
 
@@ -149,4 +145,4 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 
 # Added by Antigravity IDE
-export PATH="/Users/pastorinni/.antigravity-ide/antigravity-ide/bin:$PATH"
+export PATH="$HOME/.antigravity-ide/antigravity-ide/bin:$PATH"
