@@ -121,16 +121,7 @@ export VISUAL='vim'
 
 export GPG_TTY=$(tty)
 
-# conda — Homebrew's miniconda cask or the installer script's ~/miniconda3
-# (what os-recipies' macos.sh uses); hook whichever this machine has.
-# Hand-written on purpose: re-running `conda init` would re-add a hardcoded block.
-for _conda in /opt/homebrew/Caskroom/miniconda/base "$HOME/miniconda3"; do
-    if [ -x "$_conda/bin/conda" ]; then
-        eval "$("$_conda/bin/conda" shell.zsh hook 2>/dev/null)"
-        break
-    fi
-done
-unset _conda
+# Python: uv (per-project .venv, uv-managed interpreters) — no shell init needed.
 
 
 # asdf version manager (shims must be on PATH; asdf 0.16+ no longer sources a script)
