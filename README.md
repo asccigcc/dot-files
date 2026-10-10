@@ -41,6 +41,28 @@ Just run:
 This copies the dot files into `$HOME` (backing up anything it overwrites) and
 bootstraps tmux. Pass `--yes` to skip the overwrite prompts.
 
+### Setup (new machine)
+
+`./install` only places files. `./setup` also installs what the configs depend
+on, dispatching to `bin/setup/<os>`:
+
+```
+./setup
+```
+
+On macOS it installs Homebrew if missing, the packages `.vimrc`/`.tmux.conf`
+need (`tmux vim fzf ripgrep`), a Nerd Font for vim-devicons, then runs
+`./install` and `vim +PlugInstall`. `bin/setup/ubuntu` and `bin/setup/fedora`
+are unimplemented stubs.
+
+Run this from a real terminal — the `PlugInstall` step needs a tty.
+
+> For a full machine build (dev toolchain, Docker, GUI apps, Claude Code) use
+> [os-recipies](https://github.com/asccigcc/os-recipies) instead; it clones this
+> repo and runs `./install` at the end. `./setup` overlaps it and is the
+> lighter, dotfiles-only path — it's also currently the only one that installs
+> the vim plugins and a Nerd Font.
+
 ### Sync
 
 Sync copies dotfiles in either direction:
